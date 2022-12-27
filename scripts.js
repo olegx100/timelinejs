@@ -121,7 +121,7 @@ function drawItems () {
         to += states[i].Duration;
     }
 
-    //refreshScale();
+    refreshScale();
 }
 
 function onMouseWheel (evt) {

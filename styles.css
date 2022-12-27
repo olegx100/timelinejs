@@ -1,22 +1,19 @@
 #timelineMainContainer {
     border: 1px coral solid;
+    border-bottom: none;
 
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     overflow-x: hidden;
     align-items: stretch;
-    height: 3rem;
+    padding-top: 0.5rem;
+    height: 4rem;
 }
 
 .timeLineItem {
     border: 0px blue solid;
     text-align: center;
-}
-/*for summary item less than 1 px*/
-._Combined {
-    background-color: lightgray;
-    color: white;
 }
 
 .Print {
@@ -43,22 +40,25 @@
 
 
 #timelineScaleContainer {
-    border: 0px coral solid;
+    border: 1px coral solid;
+    border-top: none;
 
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     overflow-x: hidden;
     align-items: stretch;
-    height: 1.2rem;
-
-
 }
 
 .scaleSpanItem {
     border-left: 1px dimgray solid;
-    border-bottom: 2px dimgray solid;
+    border-top: 2px dimgray solid;
+    
+    /*padding-left: 0.2rem;*/
+    padding-bottom: 0.4rem;
+    padding-top: 0.4rem;
+}
 
-    padding-left: 0.2rem;
-    padding-bottom: 0.2rem;
+.scaleEdgeSpanItem {
+    border-left: none;
 }
