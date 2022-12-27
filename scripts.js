@@ -14,7 +14,7 @@ mainContainer.addEventListener("wheel", onMouseWheel);
 mainContainer.addEventListener("mousedown", startDrag);
 mainContainer.addEventListener("mouseup", endDrag);
 mainContainer.addEventListener('mousemove', drag);
-mainContainer.addEventListener('mouseleave', endDrag);
+//mainContainer.addEventListener('mouseleave', endDrag);
 
 //Buttons can be removed from HTML
 const leftBtn = document.getElementById("leftBtn");
@@ -183,6 +183,11 @@ function endDrag () {
 function drag (evt) {
     if (!inDrag)
         return;
+    
+    if (evt.buttons == 0) {
+        endDrag();
+        return;
+    }
 
     timeOffset += (evt.x - dragStartX) / scale;   
     dragStartX = evt.x;
