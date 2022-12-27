@@ -9,44 +9,48 @@ var states = [
 
 var scrollInterval = NaN;
 const mainContainer = document.getElementById("timelineMainContainer");
-console.log (mainContainer);
+mainContainer.addEventListener("resize", onResize); //does not work ?
+mainContainer.addEventListener("wheel", onMouseWheel);
+mainContainer.addEventListener("mousedown", startDrag);
+mainContainer.addEventListener("mouseup", endDrag);
+mainContainer.addEventListener('mousemove', drag);
+mainContainer.addEventListener('mouseleave', endDrag);
 
+//Buttons can be removed from HTML
 const leftBtn = document.getElementById("leftBtn");
-leftBtn.addEventListener("mousedown", startScrollLeft);
-leftBtn.addEventListener("mouseup", stopScroll);
+leftBtn?.addEventListener("mousedown", startScrollLeft);
+leftBtn?.addEventListener("mouseup", stopScroll);
 
 const rightBtn = document.getElementById("rightBtn");
-rightBtn.addEventListener("mousedown", startScrollRight);
-rightBtn.addEventListener("mouseup", stopScroll);
+rightBtn?.addEventListener("mousedown", startScrollRight);
+rightBtn?.addEventListener("mouseup", stopScroll);
 
 const resetBtn = document.getElementById("resetBtn");
-resetBtn.addEventListener("click", autoScale);
+resetBtn?.addEventListener("click", autoScale);
 
+//global variables
 var totalTime;
 var scale = 1;
 var timeOffset = 0;
+
 start();
 
-
 function start () {
-
     createDummyModel ();
 
     totalTime = 0;
     for(let i = 0; i < states.length; i++) {
         totalTime += states[i].Duration;
     }
+    autoScale();
+}
 
-    mainContainer.addEventListener("resize", onResize);
-    mainContainer.addEventListener("wheel", onMouseWheel);
-    mainContainer.addEventListener("click", onClick);
-    onResize (NaN);
+function getWidth () {
+    return Math.floor(mainContainer.clientWidth);
 }
 
 function onResize (evt) {
-    let width = mainContainer.clientWidth;
-    scale = width / totalTime; //px/sec
-    drawItems ();
+    autoScale();
 }
 
 function drawItems () {
@@ -54,8 +58,8 @@ function drawItems () {
         mainContainer.removeChild(mainContainer.firstChild);
     }
 
-    let width = mainContainer.clientWidth;
-    let maxW = timeOffset * scale;
+    let width = getWidth();
+    let maxW = Math.round(timeOffset * scale);
     let startIdx = 0;
     if (maxW >= 0) {
         const el = document.createElement("div");
@@ -66,10 +70,10 @@ function drawItems () {
     }
     else {
         while (startIdx < states.length) {
-            let w = states[startIdx].Duration * scale;
+            let w = Math.round(states[startIdx].Duration * scale);
             if (maxW + w > 0) {
-                w += maxW; 
-                maxW = 0;
+                w = maxW + w;
+                maxW = w;
                 const el = document.createElement("div");
                 el.innerText = states[startIdx].State;
                 el.classList.add ("timeLineItem");
@@ -84,23 +88,30 @@ function drawItems () {
         }
     }
 
-    for(let i = startIdx; i < states.length; i++) {
-        let w = states[i].Duration * scale;
-        if (maxW + w > width) 
-            w = width - maxW;
+    console.log ("timeOffset:" + timeOffset, "scale:" + scale, "maxW:" + maxW, "startIdx:" + startIdx, "width:" + width);
 
+    for(let i = startIdx; i < states.length; i++) {
+        let w = Math.round(states[i].Duration * scale);
+        if (maxW + w >= width)  
+        {
+            w = width - maxW - 1;
+            if (w < 1)
+                break;
+        }
         maxW += w;
 
         const el = document.createElement("div");
         el.innerText = states[i].State;
         el.classList.add ("timeLineItem");
         el.classList.add (states[i].State);
-        el.id = "span_" + i;
+        el.id = "i_" + i;
         mainContainer.appendChild(el);
         el.style.width = "" + w + "px";
         if (maxW >= width)
             break;
     }
+
+    console.log ("maxW at end:" + maxW);
 }
 
 function onMouseWheel (evt) {
@@ -115,24 +126,17 @@ function onMouseWheel (evt) {
      
     timeOffset = (offsetInPx - locTimePt * scale)/scale;
     
-    //if (timeOffset < 0)
-    //    timeOffset = 0;
-
     drawItems ();
-}
-
-function onClick(evt) {
-    const offsetInPx = evt.x - mainContainer.getBoundingClientRect().left;
-    let locTimePt = timeOffset + offsetInPx / scale;
 }
 
 function autoScale () {
     timeOffset = 0;
-    onResize ();
+    scale =  getWidth() / totalTime; //px/sec
+    drawItems ();
 }
 
 function scroll (dir) {
-    let width = mainContainer.clientWidth;
+    let width = getWidth();
     let dt = width / scale * 0.005;
     if (dir > 0)
         timeOffset += dt;
@@ -156,6 +160,30 @@ function stopScroll () {
     clearInterval(scrollInterval);
     scrollInterval = NaN;
 }
+
+//Drag and drop handling
+var inDrag;
+var dragStartX;
+
+function startDrag (evt) {
+    inDrag = true;
+    dragStartX = evt.x; //x on page, not the container
+}
+
+function endDrag () {
+    inDrag = false;
+}
+
+function drag (evt) {
+    if (!inDrag)
+        return;
+
+    timeOffset += (evt.x - dragStartX) / scale;   
+    dragStartX = evt.x;
+    drawItems ();
+}
+
+//EndOf Drag and drop handling
 
 function createDummyModel () {
     states = [];

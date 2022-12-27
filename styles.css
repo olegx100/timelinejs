@@ -11,18 +11,30 @@
 
 .timeLineItem {
     border: 0px blue solid;
+    text-align: center;
+}
+/*for summary item less than 1 px*/
+._Combined {
+    background-color: lightgray;
+    color: white;
 }
 
 .Print {
     background-color: darkgreen;
+    color: white;
 }
 
 .Service {
     background-color: purple;
+    color: white;
 }
 
 .Error {
     background-color: red;
+}
+
+.None {
+    background-color: lemonchiffon;
 }
 
 .Ready {
