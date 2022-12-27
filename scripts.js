@@ -53,6 +53,14 @@ function onResize (evt) {
     autoScale();
 }
 
+function px2time (px) {
+    return px / scale + timeOffset;
+}
+
+function timeToPx (time) {
+    return (time - timeOffset) * scale;
+}
+
 function drawItems () {
     while (mainContainer.firstChild) {
         mainContainer.removeChild(mainContainer.firstChild);
@@ -88,8 +96,6 @@ function drawItems () {
         }
     }
 
-    console.log ("timeOffset:" + timeOffset, "scale:" + scale, "maxW:" + maxW, "startIdx:" + startIdx, "width:" + width);
-
     for(let i = startIdx; i < states.length; i++) {
         let w = Math.round(states[i].Duration * scale);
         if (maxW + w >= width)  
@@ -111,7 +117,7 @@ function drawItems () {
             break;
     }
 
-    console.log ("maxW at end:" + maxW);
+    //refreshScale();
 }
 
 function onMouseWheel (evt) {

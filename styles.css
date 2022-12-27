@@ -40,3 +40,25 @@
 .Ready {
     background-color: lightgreen;
 }
+
+
+#timelineScaleContainer {
+    border: 0px coral solid;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    align-items: stretch;
+    height: 1.2rem;
+
+
+}
+
+.scaleSpanItem {
+    border-left: 1px dimgray solid;
+    border-bottom: 2px dimgray solid;
+
+    padding-left: 0.2rem;
+    padding-bottom: 0.2rem;
+}
