@@ -1,4 +1,4 @@
-const states = [
+var states = [
     {"State": "Print", "Duration": 3, "Start": "8:00"}, 
     {"State": "Error", "Duration": 6, "Start": "8:00"}, 
     {"State": "Ready", "Duration": 12, "Start": "8:00"}, 
@@ -29,6 +29,9 @@ start();
 
 
 function start () {
+
+    createDummyModel ();
+
     totalTime = 0;
     for(let i = 0; i < states.length; i++) {
         totalTime += states[i].Duration;
@@ -92,6 +95,7 @@ function drawItems () {
         el.innerText = states[i].State;
         el.classList.add ("timeLineItem");
         el.classList.add (states[i].State);
+        el.id = "span_" + i;
         mainContainer.appendChild(el);
         el.style.width = "" + w + "px";
         if (maxW >= width)
@@ -151,4 +155,17 @@ function startScrollRight () {
 function stopScroll () {
     clearInterval(scrollInterval);
     scrollInterval = NaN;
+}
+
+function createDummyModel () {
+    states = [];
+    stateNames = ["Print", "Service", "Ready", "None", "Error"];
+
+    for (let i = 0; i<1000; i++) {
+        let state = {};
+        state.State = stateNames[Math.floor(Math.random() * stateNames.length)];
+        state.Duration = Math.random() * 60;
+        state.start = "00:00:00"
+        states.push(state);
+    }
 }
