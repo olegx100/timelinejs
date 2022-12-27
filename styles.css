@@ -1,0 +1,30 @@
+#timelineMainContainer {
+    border: 1px coral solid;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    align-items: stretch;
+    height: 3rem;
+}
+
+.timeLineItem {
+    border: 1px blue solid;
+}
+
+.Print {
+    background-color: darkgreen;
+}
+
+.Service {
+    background-color: purple;
+}
+
+.Error {
+    background-color: red;
+}
+
+.Ready {
+    background-color: lightgreen;
+}
