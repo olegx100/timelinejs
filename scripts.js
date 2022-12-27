@@ -67,7 +67,7 @@ function drawItems () {
     }
 
     let width = getWidth();
-    let maxW = Math.round(timeOffset * scale);
+    let maxW = timeOffset * scale;
     let startIdx = 0;
     if (maxW >= 0) {
         const el = document.createElement("div");
@@ -78,7 +78,7 @@ function drawItems () {
     }
     else {
         while (startIdx < states.length) {
-            let w = Math.round(states[startIdx].Duration * scale);
+            let w = states[startIdx].Duration * scale;
             if (maxW + w > 0) {
                 w = maxW + w;
                 maxW = w;
@@ -97,10 +97,10 @@ function drawItems () {
     }
 
     for(let i = startIdx; i < states.length; i++) {
-        let w = Math.round(states[i].Duration * scale);
+        let w = states[i].Duration * scale;
         if (maxW + w >= width)  
         {
-            w = width - maxW - 1;
+            w = width - maxW;
             if (w < 1)
                 break;
         }
@@ -131,7 +131,6 @@ function onMouseWheel (evt) {
         scale /= 1.1;
      
     timeOffset = (offsetInPx - locTimePt * scale)/scale;
-    
     drawItems ();
 }
 
