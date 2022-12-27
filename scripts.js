@@ -54,11 +54,11 @@ function onResize (evt) {
 }
 
 function px2time (px) {
-    return px / scale + timeOffset;
+    return px / scale - timeOffset;
 }
 
 function timeToPx (time) {
-    return (time - timeOffset) * scale;
+    return (time + timeOffset) * scale;
 }
 
 function drawItems () {
@@ -66,6 +66,7 @@ function drawItems () {
         mainContainer.removeChild(mainContainer.firstChild);
     }
 
+    let to = 0;
     let width = getWidth();
     let maxW = timeOffset * scale;
     let startIdx = 0;
@@ -78,6 +79,7 @@ function drawItems () {
     }
     else {
         while (startIdx < states.length) {
+            to += states[startIdx].Duration;
             let w = states[startIdx].Duration * scale;
             if (maxW + w > 0) {
                 w = maxW + w;
@@ -107,7 +109,7 @@ function drawItems () {
         maxW += w;
 
         const el = document.createElement("div");
-        el.innerText = states[i].State;
+        el.innerText = "" + to;//states[i].State;
         el.classList.add ("timeLineItem");
         el.classList.add (states[i].State);
         el.id = "i_" + i;
@@ -115,6 +117,8 @@ function drawItems () {
         el.style.width = "" + w + "px";
         if (maxW >= width)
             break;
+            
+        to += states[i].Duration;
     }
 
     //refreshScale();
@@ -197,13 +201,20 @@ function drag (evt) {
 
 function createDummyModel () {
     states = [];
-    stateNames = ["Print", "Service", "Ready", "None", "Error"];
-
-    for (let i = 0; i<1000; i++) {
+    stateNames = ["Print", "Service", "Ready", "None", "Error", "PowerSave"];
+    let lastState = null;
+    while (states.length < 1000) {
         let state = {};
-        state.State = stateNames[Math.floor(Math.random() * stateNames.length)];
-        state.Duration = Math.random() * 60;
-        state.start = "00:00:00"
-        states.push(state);
+        if (states.length == 0)
+            state.State = stateNames[0];
+        else
+            state.State = stateNames[Math.floor(Math.random() * stateNames.length)];
+
+        if (state.State != lastState) {
+            lastState = state.State;
+            state.Duration = Math.floor(Math.random() * 60);
+            state.start = "00:00:00"
+            states.push(state);
+        }
     }
 }
