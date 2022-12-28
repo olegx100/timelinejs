@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-time-line-main',
@@ -15,6 +16,7 @@ export class TimeLineMainComponent implements OnInit {
   @Input("nScales") nScales:number = 0;
   @Input('items') items: Array<any>;
 
+  timeFormat = "HH:mm:ss";
   totalTime = 0;
   scale = 1;
   timeOffset = 0;
@@ -51,8 +53,28 @@ export class TimeLineMainComponent implements OnInit {
   //do it on items items
   public start () {
 
+    //Calc total time and insert empty states to fill gaps
     this.totalTime = 0;
-    for(let i = 0; i < this.items.length; i++) {
+    if (this.items.length > 0)
+      this.totalTime = this.items[0].Duration;
+
+    for(let i = 1; i < this.items.length; i++) {
+      let duration = this.items[i].Start - this.items[i-1].Start;
+      if (duration < this.items[i-1].Duration)
+        this.items[i-1].Duration = duration;
+      
+      if (duration > this.items[i-1].Duration) {
+
+        let newStart = this.items[i-1].Start.getTime()+ this.items[i-1].Duration;
+        let newState = {
+          Start: newStart, 
+          Duration:  this.items[i].Start.getTime() - newStart,
+          State: "_EmptyState_"};
+        
+        this.items.splice(i, 0, newState);
+        this.totalTime += newState.Duration;
+        i++;
+      }
       this.totalTime += this.items[i].Duration;
     }
     this.autoScale();
@@ -79,6 +101,8 @@ export class TimeLineMainComponent implements OnInit {
       this.mainContainer.removeChild(this.mainContainer.firstChild);
     }
 
+    const datepipe: DatePipe = new DatePipe('en-US')
+
     let timeCount = 0;
     let width = this.getWidth();
     let maxW = this.timeOffset * this.scale;
@@ -87,8 +111,8 @@ export class TimeLineMainComponent implements OnInit {
         const el = document.createElement("div");
         el.classList.add ("timeLineItem");
         el.classList.add ("EmptyState");
+        el.style.width = "" + maxW + "px";            
         this.mainContainer.appendChild(el);
-        el.style.width = "" + maxW + "px";    
     }
     else {
         while (startIdx < this.items.length) {
@@ -98,11 +122,11 @@ export class TimeLineMainComponent implements OnInit {
                 w = maxW + w;
                 maxW = w;
                 const el = document.createElement("div");
-                el.innerText = this.items[startIdx].State;
+                el.innerText = datepipe.transform(this.items[startIdx].Start, this.timeFormat); //this.items[startIdx].State;
                 el.classList.add ("timeLineItem");
                 el.classList.add (this.items[startIdx].State);
+                el.style.width = "" + w + "px";                
                 this.mainContainer.appendChild(el);
-                el.style.width = "" + w + "px";
                 startIdx++;
                 break;
             } 
@@ -113,6 +137,7 @@ export class TimeLineMainComponent implements OnInit {
 
     for(let i = startIdx; i < this.items.length; i++) {
         let w = this.items[i].Duration * this.scale;
+        console.log ("item duration: ", this.items[i].Duration);
         if (maxW + w >= width)  
         {
             w = width - maxW;
@@ -120,14 +145,14 @@ export class TimeLineMainComponent implements OnInit {
                 break;
         }
         maxW += w;
-
+        console.log ("w:", w);
         const el = document.createElement("div");
-        el.innerText = this.items[i].State; //"" + timeCount
+        el.innerText = datepipe.transform(this.items[i].Start, this.timeFormat); //this.items[i].State; //"" + timeCount
         el.classList.add ("timeLineItem");
         el.classList.add (this.items[i].State);
         el.id = "i_" + i;
-        this.mainContainer.appendChild(el);
         el.style.width = "" + w + "px";
+        this.mainContainer.appendChild(el);
         if (maxW >= width)
             break;
             
