@@ -1,9 +1,10 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-time-line-main',
   templateUrl: './time-line-main.component.html',
-  styleUrls: ['./time-line-main.component.css']
+  styleUrls: ['./time-line-main.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 
 
