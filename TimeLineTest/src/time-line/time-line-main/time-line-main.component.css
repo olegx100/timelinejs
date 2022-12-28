@@ -9,4 +9,55 @@
     align-items: stretch;
 }
 
+.timelineMainContainer {
+    border: 1px coral solid;
+    border-bottom: none;
 
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    align-items: stretch;
+    padding-top: 0.5rem;
+    height: 4rem;
+}
+
+.timeLineItem {
+    border: 0px blue solid;
+    text-align: center;
+}
+
+.Print {
+    background-color: darkgreen;
+    color: white;
+}
+
+.Service {
+    background-color: purple;
+    color: white;
+}
+
+.Error {
+    background-color: red;
+}
+
+.None {
+    background-color: lemonchiffon;
+}
+
+.Ready {
+    background-color: lightgreen;
+}
+
+.scaleSpanItem {
+    border-left: 1px dimgray solid;
+    border-top: 2px dimgray solid;
+    
+    /*padding-left: 0.2rem;*/
+    padding-bottom: 0.4rem;
+    padding-top: 0.4rem;
+}
+
+.scaleEdgeSpanItem {
+    border-left: none;
+}
