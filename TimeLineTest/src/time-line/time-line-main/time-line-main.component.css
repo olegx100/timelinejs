@@ -25,9 +25,11 @@
 .timeLineItem {
     border: 0px blue solid;
     text-align: center;
+    display: inline-block;
+    overflow-x: hidden;
 }
 
-.Print {
+.Active {
     background-color: darkgreen;
     color: white;
 }
@@ -39,6 +41,7 @@
 
 .Error {
     background-color: red;
+    color: white;
 }
 
 .None {
@@ -47,6 +50,11 @@
 
 .Ready {
     background-color: lightgreen;
+}
+
+.Maintenance {
+    background-color: chocolate;
+    color: white;
 }
 
 .scaleSpanItem {

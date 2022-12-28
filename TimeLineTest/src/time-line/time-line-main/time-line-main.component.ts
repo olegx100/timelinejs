@@ -79,7 +79,7 @@ export class TimeLineMainComponent implements OnInit {
       this.mainContainer.removeChild(this.mainContainer.firstChild);
     }
 
-    let to = 0;
+    let timeCount = 0;
     let width = this.getWidth();
     let maxW = this.timeOffset * this.scale;
     let startIdx = 0;
@@ -92,7 +92,7 @@ export class TimeLineMainComponent implements OnInit {
     }
     else {
         while (startIdx < this.items.length) {
-            to += this.items[startIdx].Duration;
+            timeCount += this.items[startIdx].Duration;
             let w = this.items[startIdx].Duration * this.scale;
             if (maxW + w > 0) {
                 w = maxW + w;
@@ -122,7 +122,7 @@ export class TimeLineMainComponent implements OnInit {
         maxW += w;
 
         const el = document.createElement("div");
-        el.innerText = "" + to;//states[i].State;
+        el.innerText = this.items[i].State; //"" + timeCount
         el.classList.add ("timeLineItem");
         el.classList.add (this.items[i].State);
         el.id = "i_" + i;
@@ -131,7 +131,7 @@ export class TimeLineMainComponent implements OnInit {
         if (maxW >= width)
             break;
             
-        to += this.items[i].Duration;
+        timeCount += this.items[i].Duration;
     }
 
     this.refreshScale();
