@@ -260,4 +260,4 @@ refreshScale () {
     }
   }
   //EndOf Scale handler
-}
+} 
