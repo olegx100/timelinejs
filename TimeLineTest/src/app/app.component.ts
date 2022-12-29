@@ -17,14 +17,14 @@ export class AppComponent {
 
   getItems () {
     let res:Array<any> = [
-      {"State": "Active", "Start": new Date(2022, 28, 10, 8, 0, 0)}, 
-      {"State": "Error", "Start": new Date(2022, 28, 10, 8, 3, 0)}, 
-      {"State": "Ready", "Start": new Date(2022, 28, 10, 8, 9, 0)}, 
-      {"State": "Service", "Start": new Date(2022, 28, 10, 8, 21, 0)}, 
-      {"State": "Active", "Start": new Date(2022, 28, 10, 8, 39, 0)}, 
-      {"State": "Ready", "Start": new Date(2022, 28, 10, 8, 57, 0)}, 
-      {"State": "Standby", "Start": new Date(2022, 28, 10, 9, 15, 0)}, 
-      {"State": "Maintenance", "Start": new Date(2022, 28, 10, 9, 35, 0)}
+      {"State": "Active", "Start": new Date(2022, 28, 10, 8, 0, 0).getTime()}, 
+      {"State": "Error", "Start": new Date(2022, 28, 10, 8, 3, 0).getTime()}, 
+      {"State": "Ready", "Start": new Date(2022, 28, 10, 8, 9, 0).getTime()}, 
+      {"State": "Service", "Start": new Date(2022, 28, 10, 8, 21, 0).getTime()}, 
+      {"State": "Active", "Start": new Date(2022, 28, 10, 8, 39, 0).getTime()}, 
+      {"State": "Ready", "Start": new Date(2022, 28, 10, 8, 57, 0).getTime()}, 
+      {"State": "Standby", "Start": new Date(2022, 28, 10, 9, 15, 0).getTime()}, 
+      {"State": "Maintenance", "Start": new Date(2022, 28, 10, 9, 35, 0).getTime()}
     ];
 
     for(let i = 1; i < res.length; i++) {
