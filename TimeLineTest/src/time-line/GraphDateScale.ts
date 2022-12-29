@@ -1,3 +1,5 @@
+import { DatePipe } from "@angular/common";
+
 export class GraphDateScale {
   private _widthPx: number;
   public get widthPx(): number {
@@ -12,9 +14,11 @@ export class GraphDateScale {
   public get minTime(): number {
     return this._minTime;
   }
+  
   public set minTime(value: number) {
     this._minTime = value;
-    this.raiseRedrawEvent();
+    if (this.minTimeLimit && this.minTimeLimit > value)
+      this._minTime = this.minTimeLimit;
   }
 
   private _maxTime: number;
@@ -23,7 +27,24 @@ export class GraphDateScale {
   }
   public set maxTime(value: number) {
     this._maxTime = value;
-    this.raiseRedrawEvent();
+    if (this._maxTimeLimit && this._maxTimeLimit < value)
+      this._maxTime = this._maxTimeLimit;
+  }
+
+  private _minTimeLimit: number;
+  public get minTimeLimit(): number {
+    return this._minTimeLimit;
+  }
+  public set minTimeLimit(value: number) {
+    this._minTimeLimit = value;
+  }
+
+  private _maxTimeLimit: any;
+  public get maxTimeLimit(): any {
+    return this._maxTimeLimit;
+  }
+  public set maxTimeLimit(value: any) {
+    this._maxTimeLimit = value;
   }
 
   public timeToPx(timePt) {
@@ -53,8 +74,10 @@ export class GraphDateScale {
     let leftTime = timeSpan * r;
     let rightTime = timeSpan - leftTime;
     let midPoint = this._minTime + leftTime;
-    this._minTime = midPoint - leftTime / upScale;
-    this._maxTime = midPoint + rightTime / upScale;
+    
+    this.minTime = midPoint - leftTime / upScale;
+    this.maxTime = midPoint + rightTime / upScale;
+
     this.raiseRedrawEvent();
   }
 
@@ -82,8 +105,8 @@ export class GraphDateScale {
     }
 
     let dt = this.pxToDuration(this.dragStartX - pxPt);
-    this._minTime += dt;
-    this._maxTime += dt;
+    this.minTime += dt;
+    this.maxTime += dt;
     this.dragStartX = pxPt;
     this.raiseRedrawEvent();
     return true;
