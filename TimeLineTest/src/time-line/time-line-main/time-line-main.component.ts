@@ -117,8 +117,12 @@ export class TimeLineMainComponent implements OnInit {
     while (i < this.items.length && this.items[i].Start + this.items[i].Duration <= this.timeScale.minTime)
       i++;
 
-    if (i >= this.items.length)  
+    if (i >= this.items.length || this.items[0].Start >= this.timeScale.maxTime) 
+    {
+      this.refreshScale();
       return;
+    }
+
 
     if (this.items[i].Start < this.timeScale.minTime) {  
       w = this.timeScale.durationToPx(this.items[i].Start + this.items[i].Duration - this.timeScale.minTime);
@@ -129,7 +133,7 @@ export class TimeLineMainComponent implements OnInit {
     }
 
     //Add empty span at the beginning
-    if (this.items.length > 0 && this.items[0].Start > this.timeScale.minTime && this.items[0].Start < this.timeScale.maxTime) {
+    if (this.items.length > 0 && this.items[0].Start > this.timeScale.minTime) {
       w = this.timeScale.durationToPx(this.items[0].Start - this.timeScale.minTime);
       
       const el = this.createTimeSpan(null, w);

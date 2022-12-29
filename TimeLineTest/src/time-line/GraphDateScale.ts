@@ -27,7 +27,7 @@ export class GraphDateScale {
   }
   public set maxTime(value: number) {
     this._maxTime = value;
-    if (this._maxTimeLimit && this._maxTimeLimit < value)
+    if (this._maxTimeLimit && value > this._maxTimeLimit)
       this._maxTime = this._maxTimeLimit;
   }
 

@@ -18,7 +18,7 @@ const msecs = [1, 2, 5, 10, 20, 50, 100, 200, 500,                 //msec
     3_600_000, 7_200_000, 14_400_000, 28_800_000,                  //hours  
     mSecInDay, mSecInDay * 2, mSecInDay * 5, mSecInDay * 10,       //days
     mSecInMonth, mSecInMonth * 2, mSecInMonth * 3, mSecInMonth * 6,
-    mSecInYear, mSecInYear * 2, mSecInYear * 5, mSecInYear * 10, mSecInYear * 20, mSecInYear * 50
+    mSecInYear, mSecInYear * 2, mSecInYear * 5, mSecInYear * 10, mSecInYear * 20, mSecInYear * 50, mSecInYear * 100
     ]
 
 export class TimeScaleCalc {
@@ -51,7 +51,7 @@ export class TimeScaleCalc {
             i++;
         
         if (i >= msecs.length) 
-            return msecs.length[msecs.length - 1];
+            return msecs[msecs.length - 1];
 
         if (i == 0)
             return 1; //lowest resolution - 1 msec
@@ -82,8 +82,6 @@ export class TimeScaleCalc {
         let nYears = Math.round(timeSpanInMsec / mSecInYear);
         let dateYear = currDate.getFullYear();
         if (dateYear % nYears) {
-            let tmp = nYears - dateYear % nYears;
-            console.log ("tmp:", tmp);
             currDate.setFullYear (currDate.getFullYear() + nYears - dateYear % nYears);
         }
         return currDate.getTime();        
