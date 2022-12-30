@@ -26,8 +26,10 @@ export class AppComponent {
       {"State": "Ready", "Start"      : new Date(2022, 9, 28, 8, 57, 0).getTime()}, 
       {"State": "Standby", "Start"    : new Date(2022, 9, 28, 9, 15, 0).getTime()}, 
       {"State": "Maintenance", "Start": new Date(2022, 9, 28, 9, 35, 0).getTime()}, 
+      {"State": "Ready", "Start"      : new Date(2022, 9, 30, 0,  0, 0).getTime()},       
       {"State": "Error", "Start"      : new Date(2022, 9, 30, 0, 30, 0).getTime()}, 
       {"State": "Ready", "Start"      : new Date(2022, 9, 30, 1,  0, 0).getTime()}, 
+      {"State": "Standby", "Start"    : new Date(2022, 9, 30, 1, 30, 0).getTime()},       
       {"State": "Service", "Start"    : new Date(2022, 9, 30, 2,  0, 0).getTime()},
       {"State": "Ready", "Start"      : new Date(2022, 9, 30, 2, 30, 0).getTime(), "Duration": 30000}
     ];

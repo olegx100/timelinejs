@@ -36,15 +36,6 @@ export class TimeScaleCalc {
         return mSecInYear;
     }
 
-    private static GetRoundMonth (date: Date) : Date {
-        let dateCpy = new Date(date);
-        if (dateCpy.getDay() != 1)
-            dateCpy.setDate (1);
-       
-        dateCpy.setHours(0, 0, 0, 0);
-        return dateCpy;
-    }
-
     public static getScaleSize (timeSpanInMsec: number) {
 
         let i = 0;
@@ -60,7 +51,7 @@ export class TimeScaleCalc {
         return msecs[i - 1];    
     }
 
-    public static getNearestBiggerScalePoint (timeSpanInMsec: number, timepoint: number) {
+    public static getNearestBiggerScalePoint (timepoint: number, timeSpanInMsec: number) {
         if (timeSpanInMsec < mSecInHour * 2)
             return Math.ceil(timepoint / timeSpanInMsec) * timeSpanInMsec;
             
@@ -68,30 +59,20 @@ export class TimeScaleCalc {
 
         if (timeSpanInMsec < mSecInDay){
             let nHours = Math.round(timeSpanInMsec / mSecInHour);
-            currDate.setHours (0, 0, 0, 0);
-            while (currDate.getTime() <= timepoint)
-                currDate.setHours (currDate.getHours() + nHours, 0, 0, 0);
-
-            return currDate.getTime();
+            currDate.setHours (currDate.getHours(), 0, 0, 0);
+            return currDate.getTime() + nHours * mSecInHour;
         }
 
+        //Days
+        currDate.setHours (0, 0, 0, 0);
         if (timeSpanInMsec < mSecInMonth) {
-            currDate.setHours (0, 0, 0, 0);
             let nDays = Math.round(timeSpanInMsec / mSecInDay);
-            let dateDay = currDate.getDay();
-
-            if ((dateDay - 1) % nDays) 
-                currDate.setDate (currDate.getDate() + nDays - (dateDay - 1) % nDays);
-                        
-            if (currDate.getTime() < timepoint)
-                currDate.setDate (currDate.getDate() + nDays);
-                
+            currDate.setDate (currDate.getDate() + nDays);
             return currDate.getTime();
-
         }
 
-        currDate = this.GetRoundMonth (currDate);
         //Month
+        currDate.setDate(1);        
         if (timeSpanInMsec < mSecInYear) {
             let nMonth = Math.round(timeSpanInMsec / mSecInMonth);
             let dateMonth = currDate.getMonth();
@@ -116,20 +97,26 @@ export class TimeScaleCalc {
     }
 
     public static getNextScaleValue (timePoint: number, scaleSpan: number): number {
-        if (scaleSpan < mSecInMonth) 
+
+        if (scaleSpan < mSecInDay)
             return timePoint + scaleSpan;
 
-        let dp = new DatePipe ('en-US');    
-        let fmtStr = "dd.MM.yyyy HH:mm.ss";
-        let currDate = new Date(timePoint);
+        let currDate = new Date(timePoint);            
+        currDate.setHours (0, 0, 0, 0);
+        if (scaleSpan < mSecInMonth) {
+            let nDays = Math.round(scaleSpan / mSecInDay);
+            currDate.setDate (currDate.getDate() + nDays);
+            return currDate.getTime();
+        }
 
+        currDate.setDate (1);
         if (scaleSpan < mSecInYear) {
             let nMonth = Math.round(scaleSpan / mSecInMonth);
             currDate.setMonth (currDate.getMonth() + nMonth);
             return currDate.getTime();
         }
         
-        let nYears = Math.floor(scaleSpan / mSecInYear);
+        let nYears = Math.round(scaleSpan / mSecInYear);
         currDate.setFullYear (currDate.getFullYear() + nYears);
         return currDate.getTime();
     }

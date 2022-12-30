@@ -234,7 +234,7 @@ export class TimeLineMainComponent implements OnInit {
     const scaleWidth = this.timeScale.widthPx;
 
     let timeSlot = TimeScaleCalc.getScaleSize ((this.timeScale.maxTime - this.timeScale.minTime) / this.nScales);
-    let minScaleTime = TimeScaleCalc.getNearestBiggerScalePoint(timeSlot, this.timeScale.minTime);
+    let minScaleTime = TimeScaleCalc.getNearestBiggerScalePoint(this.timeScale.minTime, timeSlot);
 
     while (minScaleTime < this.timeScale.minTime) {
         minScaleTime += timeSlot;
@@ -255,8 +255,6 @@ export class TimeLineMainComponent implements OnInit {
         this.timeLineScaleContainer.appendChild(el);
     }
 
-    //console.log ("minTime:", this.timeToStr(minScaleTime), minScaleTime);
-
     let currScaleTime = minScaleTime;
     let itemWidth = 0;
     let i = 0;
@@ -272,7 +270,6 @@ export class TimeLineMainComponent implements OnInit {
         const el = document.createElement("div");
         el.classList.add ("scaleSpanItem");
         
-        console.log ("currtimeScale:", this.timeToStr(currScaleTime));
         el.innerText = this.datePipe.transform(currScaleTime, fmtStr);
         el.style.width = "" + itemWidth + "px";
         this.timeLineScaleContainer.appendChild(el);
