@@ -16,13 +16,14 @@ export class TimeLineMainComponent implements OnInit {
 
   @Input("nScales") nScales:number = 0;
   @Input('items') items: Array<any>;
-  @Input('minTime') minTime: Date;
-  @Input('maxTime') maxTime: Date;
+  //@Input('minTime') minTime: Date;
+  //@Input('maxTime') maxTime: Date;
 
-  timeFormat = "HH:mm:ss";
-  timeFormatMs = "HH:mm:ss.SSS";
-  dateFormat = "dd.MM.yy HH:mm";
-  yearFormat = "yyyy";
+  timeFormatMs   = "HH:mm:ss.SSS";
+  timeFormat     = "HH:mm:ss";
+  dateTimeFormat = "dd.MM.yy HH:mm";
+  dateFormat     = "dd.MM.yy";
+  yearFormat     = "yyyy";
 
   mainContainer: HTMLDivElement; 
   timeLineScaleContainer: HTMLDivElement;
@@ -207,6 +208,22 @@ export class TimeLineMainComponent implements OnInit {
     return pl.transform (time, "yyyy-MM-dd HH:mm:ss");
   }
 
+  getScaleFormatStr (scaleSize) {
+    if (scaleSize < 10000)
+      return this.timeFormatMs;
+  
+    if (scaleSize < 3600000 * 2)
+      return this.timeFormat;
+
+    if (scaleSize < TimeScaleCalc.getMsecInDay())
+        return this.dateTimeFormat;
+
+    if (scaleSize < TimeScaleCalc.getMsecInYear())
+        return this.dateFormat;
+    
+    return this.yearFormat;
+  }
+
   refreshScale () {
     if (!this.timeLineScaleContainer)
       return;
@@ -240,27 +257,19 @@ export class TimeLineMainComponent implements OnInit {
     let currScaleTime = minScaleTime;
     let itemWidth = 0;
     let i = 0;
+    let fmtStr = this.getScaleFormatStr(timeSlot);
     while (totalW + itemWidth < scaleWidth) {
         let nextScaleTime = TimeScaleCalc.getNextScaleValue (currScaleTime, timeSlot);
         itemWidth = this.timeScale.durationToPx (nextScaleTime - currScaleTime);
+
         if (totalW + itemWidth > scaleWidth)
           itemWidth = scaleWidth - totalW;
 
         totalW += itemWidth;
         const el = document.createElement("div");
         el.classList.add ("scaleSpanItem");
-        let fmtStr;
-        if (timeSlot < 10000)
-          fmtStr = this.timeFormatMs;
-        else
-          if (timeSlot < 3600000)
-            fmtStr = this.timeFormat;
-          else
-            if (timeSlot < TimeScaleCalc.getMsecInYear())
-              fmtStr = this.dateFormat;
-            else  
-              fmtStr = this.yearFormat;
         
+        console.log ("currtimeScale:", this.timeToStr(currScaleTime));
         el.innerText = this.datePipe.transform(currScaleTime, fmtStr);
         el.style.width = "" + itemWidth + "px";
         this.timeLineScaleContainer.appendChild(el);
