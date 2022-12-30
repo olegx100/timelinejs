@@ -62,11 +62,11 @@ export class TimeLineMainComponent implements OnInit {
 
   //do it on items items
   public start () {
-
+    this.items.sort ((i1, i2) => { return i1.Start - i2.Start});
     //Insert empty states to fill gaps
     for(let i = 1; i < this.items.length; i++) {
       let duration = this.items[i].Start - this.items[i-1].Start;
-      if (duration < this.items[i-1].Duration)
+      if (duration < this.items[i-1].Duration || this.items[i-1].Duration < 0)
         this.items[i-1].Duration = duration;
       
       if (duration > this.items[i-1].Duration) {
@@ -80,6 +80,9 @@ export class TimeLineMainComponent implements OnInit {
         this.items.splice(i, 0, newState);
         i++;
       }
+      
+      if (this.items[i].Duration < 0)
+        this.items[i].Duration = 0;
     }
     
     this.autoScale();
