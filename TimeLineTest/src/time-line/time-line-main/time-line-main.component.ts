@@ -202,30 +202,12 @@ export class TimeLineMainComponent implements OnInit {
     this.timeScale.endDrag();
   }
 
-  getSlotSize (slotSize) {
+  timeToStr (time) {
+    let pl = new DatePipe ('en-US');
+    return pl.transform (time, "yyyy-MM-dd HH:mm:ss");
+  }
 
-    let scaleCalc = new TimeScaleCalc();
-    let m = 1;
-    while (slotSize > 10) {
-        slotSize = slotSize / 10;
-        m = m * 10;
-    }
-
-    if (slotSize > 3)
-        return 5 * m;
-        
-    if (slotSize > 1.5)
-        return 2 * m;
-
-    return 1 * m;
-}
-
-timeToStr (time) {
-  let pl = new DatePipe ('en-US');
-  return pl.transform (time, "yyyy-MM-dd HH:mm:ss");
-}
-
-refreshScale () {
+  refreshScale () {
     if (!this.timeLineScaleContainer)
       return;
 
@@ -243,6 +225,7 @@ refreshScale () {
     }
 
     let totalW = this.timeScale.timeToPx(minScaleTime);
+
     if (totalW > 0) 
     {
         const el = document.createElement("div");
@@ -252,12 +235,17 @@ refreshScale () {
         this.timeLineScaleContainer.appendChild(el);
     }
 
+    //console.log ("minTime:", this.timeToStr(minScaleTime), minScaleTime);
+
     let currScaleTime = minScaleTime;
     let itemWidth = 0;
     let i = 0;
     while (totalW + itemWidth < scaleWidth) {
         let nextScaleTime = TimeScaleCalc.getNextScaleValue (currScaleTime, timeSlot);
         itemWidth = this.timeScale.durationToPx (nextScaleTime - currScaleTime);
+        if (totalW + itemWidth > scaleWidth)
+          itemWidth = scaleWidth - totalW;
+
         totalW += itemWidth;
         const el = document.createElement("div");
         el.classList.add ("scaleSpanItem");
@@ -273,11 +261,8 @@ refreshScale () {
             else  
               fmtStr = this.yearFormat;
         
-        //!!!Debug!!!
-        fmtStr = "yyyy-MM-dd HH:mm:ss.SSS";
-
         el.innerText = this.datePipe.transform(currScaleTime, fmtStr);
-        el.style.width = "" + (itemWidth - 1) + "px"; //-1 for the left border
+        el.style.width = "" + itemWidth + "px";
         this.timeLineScaleContainer.appendChild(el);
         currScaleTime = nextScaleTime;
         i++;

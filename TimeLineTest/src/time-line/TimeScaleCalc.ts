@@ -9,13 +9,14 @@
 
 import { DatePipe } from "@angular/common";
 
-const mSecInDay = 86_400_000;
+const mSecInHour = 3_600_000;
+const mSecInDay = mSecInHour * 24;
 const mSecInMonth = mSecInDay * 30;
 const mSecInYear = 366 * mSecInDay;
 const msecs = [1, 2, 5, 10, 20, 50, 100, 200, 500,                 //msec
     1_000, 2_000, 5_000, 10_000, 30_000,                           //sec
     60_000, 120_000, 300_000, 600_000, 1_800_000,                  //min    
-    3_600_000, 7_200_000, 14_400_000, 28_800_000,                  //hours  
+    mSecInHour, mSecInHour * 2, mSecInHour * 4, mSecInHour * 8,    //hours  
     mSecInDay, mSecInDay * 2, mSecInDay * 5, mSecInDay * 10,       //days
     mSecInMonth, mSecInMonth * 2, mSecInMonth * 3, mSecInMonth * 6,
     mSecInYear, mSecInYear * 2, mSecInYear * 5, mSecInYear * 10, mSecInYear * 20, mSecInYear * 50, mSecInYear * 100
@@ -60,10 +61,37 @@ export class TimeScaleCalc {
     }
 
     public static getNearestBiggerScalePoint (timeSpanInMsec: number, timepoint: number) {
-        if (timeSpanInMsec < mSecInMonth)
+        if (timeSpanInMsec < mSecInHour * 2)
             return Math.ceil(timepoint / timeSpanInMsec) * timeSpanInMsec;
+            
+        let currDate = new Date (timepoint);
 
-        let currDate = this.GetRoundMonth (new Date (timepoint));            
+        if (timeSpanInMsec < mSecInDay){
+            let nHours = Math.round(timeSpanInMsec / mSecInHour);
+            currDate.setHours (0, 0, 0, 0);
+            while (currDate.getTime() <= timepoint)
+                currDate.setHours (currDate.getHours() + nHours, 0, 0, 0);
+
+            return currDate.getTime();
+        }
+
+        if (timeSpanInMsec < mSecInMonth) {
+            currDate.setHours (0, 0, 0, 0);
+            let nDays = Math.round(timeSpanInMsec / mSecInDay);
+            let dateDay = currDate.getDay();
+
+            if ((dateDay - 1) % nDays) 
+                currDate.setDate (currDate.getDate() + nDays - (dateDay - 1) % nDays);
+                        
+            if (currDate.getTime() < timepoint)
+                currDate.setDate (currDate.getDate() + nDays);
+                
+            return currDate.getTime();
+
+        }
+
+        currDate = this.GetRoundMonth (currDate);
+        //Month
         if (timeSpanInMsec < mSecInYear) {
             let nMonth = Math.round(timeSpanInMsec / mSecInMonth);
             let dateMonth = currDate.getMonth();
@@ -98,13 +126,11 @@ export class TimeScaleCalc {
         if (scaleSpan < mSecInYear) {
             let nMonth = Math.round(scaleSpan / mSecInMonth);
             currDate.setMonth (currDate.getMonth() + nMonth);
-            //console.log ("timePoint:", dp.transform(timePoint, fmtStr), "nMonth:", nMonth, "newDate:", dp.transform(currDate, fmtStr));
             return currDate.getTime();
         }
         
         let nYears = Math.floor(scaleSpan / mSecInYear);
         currDate.setFullYear (currDate.getFullYear() + nYears);
-        //console.log ("timePoint:", dp.transform(timePoint, fmtStr), "nYears:", nYears, "newDate:", dp.transform(currDate, fmtStr));
         return currDate.getTime();
     }
 }

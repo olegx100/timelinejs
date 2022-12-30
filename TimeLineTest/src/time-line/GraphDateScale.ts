@@ -1,4 +1,4 @@
-import { DatePipe } from "@angular/common";
+const minTimeLimit = -2208997240000;
 
 export class GraphDateScale {
   private _widthPx: number;
@@ -64,24 +64,32 @@ export class GraphDateScale {
     return  dt / timeSpan * this._widthPx;
   }
 
-  pxToDuration (dpx) {
+  public pxToDuration (dpx) {
       return dpx / this._widthPx * (this._maxTime - this._minTime);      
   }
 
-  public changeScale(xPx, upScale) {
+  public changeScale(xPx, upScale) : Boolean {
     let timeSpan = this._maxTime - this._minTime;
+    if (timeSpan < 1 && upScale > 1)
+      return false;
+
+    if (this.minTime <= minTimeLimit && upScale < 1)  
+      return false;
+    
     let r = xPx / this._widthPx;
     let leftTime = timeSpan * r;
     let rightTime = timeSpan - leftTime;
     let midPoint = this._minTime + leftTime;
-    
     this.minTime = midPoint - leftTime / upScale;
     this.maxTime = midPoint + rightTime / upScale;
 
     this.raiseRedrawEvent();
+    return true;
   }
 
-  private raiseRedrawEvent() {}
+  private raiseRedrawEvent() {
+
+  }
 
   //Drag and drop handling
   inDrag;
@@ -89,7 +97,7 @@ export class GraphDateScale {
 
   startDrag(pxPt) {
     this.inDrag = true;
-    this.dragStartX = pxPt; //x on page, not the container
+    this.dragStartX = pxPt;
   }
 
   endDrag() {
@@ -105,7 +113,11 @@ export class GraphDateScale {
     }
 
     let dt = this.pxToDuration(this.dragStartX - pxPt);
+    
     this.minTime += dt;
+    if (this.minTime < minTimeLimit)
+      this.minTime = minTimeLimit;
+
     this.maxTime += dt;
     this.dragStartX = pxPt;
     this.raiseRedrawEvent();
