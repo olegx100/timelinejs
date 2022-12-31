@@ -1,6 +1,14 @@
 const minTimeLimit = -2208997240000;
 
+export interface IScaleEventReceiver {
+  redraw ();
+}
+
 export class GraphDateScale {
+  constructor () {
+    this.callbacks = [];
+  }
+
   private _widthPx: number;
   public get widthPx(): number {
     return this._widthPx;
@@ -87,8 +95,16 @@ export class GraphDateScale {
     return true;
   }
 
-  private raiseRedrawEvent() {
-
+  public raiseRedrawEvent() {
+    for (let cb of this.callbacks) 
+    {
+      try {
+        cb.redraw();
+      } 
+      catch(ex)  {
+        console.error ("Error:", ex);
+      }
+    }
   }
 
   //Drag and drop handling
@@ -124,4 +140,20 @@ export class GraphDateScale {
     return true;
   }
   //EndOf Drag and drop handling
+
+  callbacks : Array<IScaleEventReceiver>;
+  registerRedrawEventCallback (callback) {
+    this.callbacks.push(callback);
+  }
+
+  unregisterRedrawEventCallback (callback) {
+    let i = 0;
+    while (i < this.callbacks.length) {
+      if (this.callbacks[i] === callback) {
+        this.callbacks.splice(i, 1);
+        continue;
+      }
+      i++;
+    }
+  }
 }

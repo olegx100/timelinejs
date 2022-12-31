@@ -1,0 +1,26 @@
+.timelineScaleContainer {
+    border: 1px coral solid;
+    border-top: none;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow: hidden;
+    align-items: stretch;
+    height: 2rem;
+}
+
+.scaleSpanItem {
+    border-left: 1px dimgray solid;
+    border-top: 2px dimgray solid;
+    
+    box-sizing: border-box;
+    overflow: hidden;
+    padding-left: 0.3rem;
+    padding-bottom: 0.4rem;
+    padding-top: 0.4rem;
+}
+
+.scaleEdgeSpanItem {
+    
+}
