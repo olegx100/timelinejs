@@ -19,6 +19,10 @@
     overflow: hidden;
 }
 
+._EmptyState_ {
+    border-left: none;
+}
+
 .Active {
     background-color: darkgreen;
     color: white;

@@ -79,7 +79,7 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
   createTimeSpan (item, w) {
     const el = document.createElement("div");
     if (item) 
-      el.innerText = this.datePipe.transform(item.Start, this.timeFormat); //this.items[startIdx].State;
+      el.innerText = item.State;
     
     el.classList.add ("timeLineItem");
     el.style.width = "" + w + "px";
@@ -104,7 +104,7 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
     if (i >= this.items.length || this.items[0].Start >= this.timeScale.maxTime) 
       return;
 
-
+    //Partial 1st item draw
     if (this.items[i].Start < this.timeScale.minTime) {  
       w = this.timeScale.durationToPx(this.items[i].Start + this.items[i].Duration - this.timeScale.minTime);
       const el = this.createTimeSpan(this.items[i], w);
@@ -119,7 +119,7 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
       
       const el = this.createTimeSpan(null, w);
       el.classList.add ("_EmptyState_");
-      el.innerText = this.datePipe.transform(this.timeScale.minTime, this.timeFormat); //this.items[startIdx].State;
+      //el.innerText = this.items[0].State;
       totalW = w;        
     }
     

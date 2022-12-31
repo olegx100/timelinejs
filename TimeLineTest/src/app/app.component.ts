@@ -43,6 +43,7 @@ export class AppComponent {
       if (!res[res.length-1].Duration)
         res[res.length-1].Duration = 1;
     }
+    //to check the empty state handling in the control
     res[2].Duration = res[2].Duration / 3;
     return res;
   }
