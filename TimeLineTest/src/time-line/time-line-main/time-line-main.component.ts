@@ -2,6 +2,8 @@ import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } fr
 import { DatePipe } from '@angular/common';
 import { GraphDateScale, IScaleEventReceiver } from '../GraphDateScale';
 
+const emptyStateName = "_EmptyState_";
+
 @Component({
   selector: 'app-time-line-main',
   templateUrl: './time-line-main.component.html',
@@ -55,7 +57,7 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
         let newState = {
           Start: newStart, 
           Duration:  this.items[i].Start - newStart,
-          State: "_EmptyState_"};
+          State: emptyStateName};
         
         this.items.splice(i, 0, newState);
         i++;
@@ -78,7 +80,7 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
 
   createTimeSpan (item, w) {
     const el = document.createElement("div");
-    if (item) 
+    if (item && item.State != emptyStateName) 
       el.innerText = item.State;
     
     el.classList.add ("timeLineItem");
@@ -118,7 +120,7 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
       w = this.timeScale.durationToPx(this.items[0].Start - this.timeScale.minTime);
       
       const el = this.createTimeSpan(null, w);
-      el.classList.add ("_EmptyState_");
+      el.classList.add (emptyStateName);
       //el.innerText = this.items[0].State;
       totalW = w;        
     }
