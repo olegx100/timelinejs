@@ -18,11 +18,11 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
   timelineCalc : TimeScaleCalc;
   datePipe: DatePipe;
   
-  timeFormatMs   = "HH:mm:ss.SSS";
-  timeFormat     = "HH:mm:ss";
-  dateTimeFormat = "dd.MM.yy HH:mm";
-  dateFormat     = "dd.MM.yy";
   yearFormat     = "yyyy";
+  dateFormat     = "dd.MM.yy";
+  dateTimeFormat = "dd.MM.yy HH:mm";
+  timeFormat     = "HH:mm:ss";
+  timeFormatMs   = "HH:mm:ss.SSS";
 
   constructor(private timeScale: GraphDateScale) { 
     this.timelineCalc  = new TimeScaleCalc();
