@@ -7,8 +7,6 @@
   //1, 2, 3, 6, 12 month
   //1, 2, 5 years
 
-import { DatePipe } from "@angular/common";
-
 const mSecInHour = 3_600_000;
 const mSecInDay = mSecInHour * 24;
 const mSecInMonth = mSecInDay * 30;
