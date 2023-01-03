@@ -15,7 +15,7 @@ const emptyStateName = "_EmptyState_";
 export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
   @ViewChild('timelineMainContainer', { static:false }) rootEl: ElementRef<HTMLDivElement>;
 
-  @Input('items') items: Array<any>;
+  @Input('items') items: Array<any> = [];
   //@Input('minTime') minTime: Date;
   //@Input('maxTime') maxTime: Date;
 
@@ -74,11 +74,11 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
     return Math.floor(this.mainContainer.clientWidth);
   }
 
-  onResize (evt) {
+  onResize (evt: any) {
     this.autoScale();
   }
 
-  createTimeSpan (item, w) {
+  createTimeSpan (item: any, w: number) {
     const el = document.createElement("div");
     if (item && item.State != emptyStateName) 
       el.innerText = item.State;
@@ -155,7 +155,7 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
     }
   }
 
-  onMouseWheel (evt) {
+  onMouseWheel (evt: any) {
 
     const offsetInPx = evt.x - this.mainContainer.getBoundingClientRect().left;
     if (evt.wheelDelta > 0)
@@ -164,21 +164,21 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
       this.timeScale.changeScale (offsetInPx, 1/1.1);
   }
 
-  startDrag (evt) {
+  startDrag (evt: any) {
     const offsetInPx = evt.x - this.mainContainer.getBoundingClientRect().left;
     this.timeScale.startDrag(offsetInPx);
   }
 
-  drag (evt) {
+  drag (evt: any) {
     const offsetInPx = evt.x - this.mainContainer.getBoundingClientRect().left;
     this.timeScale.drag(offsetInPx, evt.buttons);
   }
 
-  endDrag (evt) {
+  endDrag (evt: any) {
     this.timeScale.endDrag();
   }
 
-  timeToStr (time) {
+  timeToStr (time: number) {
     let pl = new DatePipe ('en-US');
     return pl.transform (time, "yyyy-MM-dd HH:mm:ss");
   }

@@ -44,7 +44,7 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
     this.timeLineScaleContainer.addEventListener('mousemove', this.drag.bind(this));      
   }
 
-  onMouseWheel (evt) {
+  onMouseWheel (evt: any) {
 
     const offsetInPx = evt.x - this.timeLineScaleContainer.getBoundingClientRect().left;
     if (evt.wheelDelta > 0)
@@ -53,21 +53,21 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
       this.timeScale.changeScale (offsetInPx, 1/1.1);
   }
 
-  startDrag (evt) {
+  startDrag (evt: any) {
     const offsetInPx = evt.x - this.timeLineScaleContainer.getBoundingClientRect().left;
     this.timeScale.startDrag(offsetInPx);
   }
 
-  drag (evt) {
+  drag (evt: any) {
     const offsetInPx = evt.x - this.timeLineScaleContainer.getBoundingClientRect().left;
     this.timeScale.drag(offsetInPx, evt.buttons);
   }
 
-  endDrag (evt) {
+  endDrag (evt: any) {
     this.timeScale.endDrag();
   }
 
-  getScaleFormatStr (scaleSize) {
+  getScaleFormatStr (scaleSize: number) {
     if (scaleSize < 10000)
       return this.timeFormatMs;
   
@@ -126,7 +126,7 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
         const el = document.createElement("div");
         el.classList.add ("scaleSpanItem");
         
-        el.innerText = this.datePipe.transform(currScaleTime, fmtStr);
+        el.innerText = this.datePipe.transform(currScaleTime, fmtStr) || "" ;
         el.style.width = "" + itemWidth + "px";
         this.timeLineScaleContainer.appendChild(el);
         currScaleTime = nextScaleTime;

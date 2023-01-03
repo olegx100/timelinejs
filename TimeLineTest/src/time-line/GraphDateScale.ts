@@ -1,11 +1,16 @@
 const minTimeLimit = -2208997240000;
 
 export interface IScaleEventReceiver {
-  redraw ();
+  redraw () : void;
 }
 
 export class GraphDateScale {
   constructor () {
+    this._widthPx = 0;
+    this._minTime = (new Date (2020, 0, 1)).getTime();
+    this._maxTime = (new Date (2025, 0, 1)).getTime();
+    this._minTimeLimit = (new Date (1900, 0, 1)).getTime();
+    this._maxTimeLimit = (new Date (2100, 0, 1)).getTime();
     this.callbacks = [];
   }
 
@@ -55,28 +60,28 @@ export class GraphDateScale {
     this._maxTimeLimit = value;
   }
 
-  public timeToPx(timePt) {
+  public timeToPx(timePt: number) {
     let timeSpan = this._maxTime - this._minTime;
     let scale = timeSpan / this._widthPx;
     return (timePt - this._minTime) / scale;
   }
 
-  public pxToTime(pxPt) {
+  public pxToTime(pxPt: number) {
     return (
       this._minTime + ((this._maxTime - this._minTime) * pxPt) / this._widthPx
     );
   }
 
-  public durationToPx(dt) {
+  public durationToPx(dt: number) {
     let timeSpan = this._maxTime - this._minTime;
     return  dt / timeSpan * this._widthPx;
   }
 
-  public pxToDuration (dpx) {
+  public pxToDuration (dpx: number) {
       return dpx / this._widthPx * (this._maxTime - this._minTime);      
   }
 
-  public changeScale(xPx, upScale) : Boolean {
+  public changeScale(xPx: number, upScale: number) : Boolean {
     let timeSpan = this._maxTime - this._minTime;
     if (timeSpan < 1 && upScale > 1)
       return false;
@@ -108,10 +113,10 @@ export class GraphDateScale {
   }
 
   //Drag and drop handling
-  inDrag;
-  dragStartX;
+  inDrag: boolean = false;
+  dragStartX: number = 0;
 
-  startDrag(pxPt) {
+  startDrag(pxPt: number) {
     this.inDrag = true;
     this.dragStartX = pxPt;
   }
@@ -120,7 +125,7 @@ export class GraphDateScale {
     this.inDrag = false;
   }
 
-  drag(pxPt, buttons):boolean {
+  drag(pxPt: number, buttons: number):boolean {
     if (!this.inDrag) return false;
 
     if (buttons == 0) {
@@ -142,11 +147,11 @@ export class GraphDateScale {
   //EndOf Drag and drop handling
 
   callbacks : Array<IScaleEventReceiver>;
-  registerRedrawEventCallback (callback) {
+  registerRedrawEventCallback (callback: IScaleEventReceiver) {
     this.callbacks.push(callback);
   }
 
-  unregisterRedrawEventCallback (callback) {
+  unregisterRedrawEventCallback (callback: IScaleEventReceiver) {
     let i = 0;
     while (i < this.callbacks.length) {
       if (this.callbacks[i] === callback) {
