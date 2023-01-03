@@ -2,6 +2,8 @@ const minTimeLimit = -2208997240000;
 
 export interface IScaleEventReceiver {
   redraw () : void;
+  getMinTime () : number;
+  getMaxTime () : number;
 }
 
 export class GraphDateScale {
@@ -160,5 +162,42 @@ export class GraphDateScale {
       }
       i++;
     }
+  }
+
+  public autoScale () {
+
+    //TODO: !!! Limits ???
+    //this.minTimeLimit = (new Date (2020, 0, 1)).getTime();
+    //this.maxTimeLimit = (new Date (2023, 0, 1)).getTime();
+
+    if (!this.callbacks.length)
+      return;
+
+    let minTime = NaN, maxTime = NaN;
+    for (let i = 0; i < this.callbacks.length; i++) {
+      let t0 = this.callbacks[i].getMinTime();
+      if (!isNaN(t0)) {
+        if (isNaN(minTime))
+          minTime = t0;
+        else
+          minTime = Math.min (minTime, t0);  
+      }
+
+      let t1 = this.callbacks[i].getMaxTime();
+      if (!isNaN(t1)) {
+        if (isNaN(maxTime))
+          maxTime = t1;
+        else
+          maxTime = Math.max (maxTime, t1);  
+      }
+    }
+
+    if (!isNaN(minTime))
+      this.minTime = minTime;
+
+    if (!isNaN(maxTime))
+      this.maxTime = maxTime;
+
+    this.raiseRedrawEvent(); 
   }
 }

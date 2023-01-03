@@ -8,6 +8,6 @@ import { TimeLineScaleComponent } from './time-line-scale/time-line-scale.compon
   imports: [
     CommonModule
   ],
-  exports: [TimeLineMainComponent]
+  exports: [TimeLineMainComponent, TimeLineScaleComponent]
 })
 export class TimeLineModule { }

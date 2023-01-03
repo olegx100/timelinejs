@@ -9,7 +9,6 @@ const emptyStateName = "_EmptyState_";
   templateUrl: './time-line-main.component.html',
   styleUrls: ['./time-line-main.component.css'],
   encapsulation: ViewEncapsulation.None,
-  providers:[GraphDateScale]
 })
 
 export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
@@ -39,7 +38,6 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
     this.mainContainer.addEventListener('mousemove', this.drag.bind(this));
      
     this.start();
-    this.timeScale.raiseRedrawEvent();
   }
 
   //do it on items items
@@ -66,16 +64,6 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
       if (this.items[i].Duration < 0)
         this.items[i].Duration = 0;
     }
-    
-    this.autoScale();
-  }
-
-  getWidth () {
-    return Math.floor(this.mainContainer.clientWidth);
-  }
-
-  onResize (evt: any) {
-    this.autoScale();
   }
 
   createTimeSpan (item: any, w: number) {
@@ -138,23 +126,6 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
     } 
   }
 
-  autoScale () {
-
-    //TODO: !!! Limits ???
-    //this.timeScale.minTimeLimit = (new Date (2020, 0, 1)).getTime();
-    //this.timeScale.maxTimeLimit = (new Date (2023, 0, 1)).getTime();
-
-    if (this.items.length > 0) {
-      let minTime = this.items[0].Start;
-      let maxTime = this.items[this.items.length - 1].Start + this.items[this.items.length - 1].Duration;
-      this.timeScale.widthPx = this.getWidth();
-      
-      //TODO: set default scale for empty list        
-      this.timeScale.minTime = minTime;
-      this.timeScale.maxTime = maxTime;
-    }
-  }
-
   onMouseWheel (evt: any) {
 
     const offsetInPx = evt.x - this.mainContainer.getBoundingClientRect().left;
@@ -178,8 +149,23 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
     this.timeScale.endDrag();
   }
 
+  //for debug
   timeToStr (time: number) {
     let pl = new DatePipe ('en-US');
     return pl.transform (time, "yyyy-MM-dd HH:mm:ss");
+  }
+
+  getMinTime () : number {
+    if (!this.items.length)
+      return NaN;
+    
+    return this.items[0].Start;
+  }
+
+  getMaxTime () : number {
+    if (!this.items.length)
+      return NaN;
+
+    return this.items[this.items.length - 1].Start + this.items[this.items.length - 1].Duration;
   }
 } 

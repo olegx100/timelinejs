@@ -8,6 +8,7 @@ import { TimeScaleCalc } from '../TimeScaleCalc';
   templateUrl: './time-line-scale.component.html',
   styleUrls: ['./time-line-scale.component.css'], 
   encapsulation: ViewEncapsulation.None,
+  providers:[GraphDateScale]
 })
 
 export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
@@ -25,6 +26,11 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
   timeFormatMs   = "HH:mm:ss.SSS";
 
   constructor(private timeScale: GraphDateScale) { 
+
+    //temporary
+    this.items = this.getItems ();
+
+
     this.timelineCalc  = new TimeScaleCalc();
     this.datePipe = new DatePipe ("en-US");
   }
@@ -42,6 +48,9 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
     this.timeLineScaleContainer.addEventListener("mousedown", this.startDrag.bind(this));
     this.timeLineScaleContainer.addEventListener("mouseup", this.endDrag.bind(this));
     this.timeLineScaleContainer.addEventListener('mousemove', this.drag.bind(this));      
+
+    this.timeScale.widthPx = this.timeLineScaleContainer.clientWidth;
+    this.timeScale.autoScale();
   }
 
   onMouseWheel (evt: any) {
@@ -87,8 +96,6 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
     if (!this.timeLineScaleContainer)
       return;
 
-    const scaleWidth = this.timeScale.widthPx;
-
     let timeSlot = TimeScaleCalc.getScaleSize ((this.timeScale.maxTime - this.timeScale.minTime) / this.nScales);
     let minScaleTime = TimeScaleCalc.getNearestBiggerScalePoint(this.timeScale.minTime, timeSlot);
 
@@ -115,12 +122,12 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
     let itemWidth = 0;
     let i = 0;
     let fmtStr = this.getScaleFormatStr(timeSlot);
-    while (totalW < scaleWidth) {
+    while (totalW < this.timeScale.widthPx) {
         let nextScaleTime = TimeScaleCalc.getNextScaleValue (currScaleTime, timeSlot);
         itemWidth = this.timeScale.durationToPx (nextScaleTime - currScaleTime);
 
-        if (totalW + itemWidth > scaleWidth)
-          itemWidth = scaleWidth - totalW;
+        if (totalW + itemWidth > this.timeScale.widthPx)
+          itemWidth = this.timeScale.widthPx - totalW;
 
         totalW += itemWidth;
         const el = document.createElement("div");
@@ -134,5 +141,51 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
     }
   }
 
-  //EndOf Scale handler
+  getMinTime () : number {
+    return NaN;
+  }
+
+  getMaxTime () : number {
+    return NaN;
+  }
+
+  //temporary
+  items: Array<any>;
+  items2: Array<any>;
+
+  getItems () {
+    let res:Array<any> = [
+      {"State": "Active", "Start"     : new Date(2022, 9, 28, 8, 0, 0).getTime()}, 
+      {"State": "Error", "Start"      : new Date(2022, 9, 28, 8, 3, 0).getTime()}, 
+      {"State": "Ready", "Start"      : new Date(2022, 9, 28, 8, 9, 0).getTime()}, 
+      {"State": "Service", "Start"    : new Date(2022, 9, 28, 8, 21, 0).getTime()}, 
+      {"State": "Active", "Start"     : new Date(2022, 9, 28, 8, 40, 0).getTime()}, 
+      {"State": "Ready", "Start"      : new Date(2022, 9, 28, 8, 57, 0).getTime()}, 
+      {"State": "Standby", "Start"    : new Date(2022, 9, 28, 9, 15, 0).getTime()}, 
+      {"State": "Maintenance", "Start": new Date(2022, 9, 28, 9, 35, 0).getTime()}, 
+      {"State": "Ready", "Start"      : new Date(2022, 9, 30, 0,  0, 0).getTime()},       
+      {"State": "Error", "Start"      : new Date(2022, 9, 30, 0, 30, 0).getTime()}, 
+      {"State": "Ready", "Start"      : new Date(2022, 9, 30, 1,  0, 0).getTime()}, 
+      {"State": "Standby", "Start"    : new Date(2022, 9, 30, 1, 30, 0).getTime()},       
+      {"State": "Service", "Start"    : new Date(2022, 9, 30, 2,  0, 0).getTime()},
+      {"State": "Ready", "Start"      : new Date(2022, 9, 30, 2, 30, 0).getTime(), "Duration": 30000}
+    ];
+
+    for(let i = 1; i < res.length; i++) {
+      res[i-1].Duration =  (res[i].Start - res[i-1].Start);
+    }
+
+    if (res.length > 0) 
+    {
+      if (!res[res.length-1].Duration)
+        res[res.length-1].Duration = 1;
+    }
+    //to check the empty state handling in the control
+    res[2].Duration = res[2].Duration / 3;
+
+    this.items2 = [];
+    this.items2.push (res[3]); 
+    this.items2.push (res[8]); 
+    return res;
+  }  
 }
