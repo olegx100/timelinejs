@@ -113,12 +113,22 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
       totalW = w;        
     }
     
+    let dw = 0;
     //Draw all items in time range 
     while (totalW < this.timeScale.widthPx && i < this.items.length) {
       w = this.timeScale.durationToPx(this.items[i].Duration);
-      if (totalW + w >= this.timeScale.widthPx) {
-        w = this.timeScale.widthPx - totalW;
+      if (w < 1) {
+        dw += w;
+        w = 0;
       }
+      if (dw >= 1) {
+        w += dw;
+        dw = 0;
+      }
+
+      if (totalW + w >= this.timeScale.widthPx)
+        w = this.timeScale.widthPx - totalW;
+      
       totalW += w; 
       const el = this.createTimeSpan(this.items[i], w);
       el.classList.add (this.items[i].State);
