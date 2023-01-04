@@ -15,8 +15,6 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
   @ViewChild('timelineMainContainer', { static:false }) rootEl: ElementRef<HTMLDivElement>;
 
   @Input('items') items: Array<any> = [];
-  //@Input('minTime') minTime: Date;
-  //@Input('maxTime') maxTime: Date;
 
   mainContainer: HTMLDivElement; 
   timeFormat = "yy-MM-dd HH:mm:ss";
@@ -130,8 +128,10 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
         w = this.timeScale.widthPx - totalW;
       
       totalW += w; 
-      const el = this.createTimeSpan(this.items[i], w);
-      el.classList.add (this.items[i].State);
+      if (w > 0) {
+        const el = this.createTimeSpan(this.items[i], w);
+        el.classList.add (this.items[i].State);
+      }
       i++;
     } 
   }
