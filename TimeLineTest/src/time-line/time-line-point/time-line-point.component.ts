@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, ElementRef, Input, ViewChild, ViewEncapsulation } from '@angular/core';
 import { GraphDateScale, IScaleEventReceiver } from '../GraphDateScale';
 
@@ -13,28 +14,43 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
   
   ctrlContainer: HTMLCanvasElement; 
   private ctx: CanvasRenderingContext2D | null;
-  constructor (private timeScale: GraphDateScale) {
+  datePipe: DatePipe;
+  rect: DOMRect;
 
+  constructor (private timeScale: GraphDateScale) {
+    this.datePipe = new DatePipe ('en-US');
   }
 
   ngAfterViewInit() {
     this.ctrlContainer = this.rootEl.nativeElement;
     console.log (this.rootEl.nativeElement);
-    this.ctx = this.rootEl.nativeElement.getContext("2d");
+    this.ctx = this.rootEl.nativeElement.getContext("2d", { alpha: false });
     this.timeScale.registerRedrawEventCallback(this);
     this.ctrlContainer.addEventListener('wheel', this.onMouseWheel.bind(this));
     this.ctrlContainer.addEventListener("mousedown", this.startDrag.bind(this));
     this.ctrlContainer.addEventListener("mouseup", this.endDrag.bind(this));
     this.ctrlContainer.addEventListener('mousemove', this.drag.bind(this));
 
-    let rect = this.ctrlContainer.getClientRects();
-    if (this.ctx) {
-      this.ctx.canvas.width = rect[0].width;
-      this.ctx.canvas.height = rect[0].height;
-      //this.ctx?.scale(1, 1);
-    }
+    this.init ();
+  }
+
+  init () {
+    if (!this.ctx)
+      return;
+
+    const r = this.ctrlContainer.getBoundingClientRect();
+    if (this.rect && r.width === this.rect.width && r.height === this.rect.height)
+      return;
+      
+    this.rect = r;
+
+    const dpr = window.devicePixelRatio;
+    this.ctx.canvas.width = r.width * dpr;
+    this.ctx.canvas.height = r.height * dpr;
+    this.ctx.scale(dpr, dpr);
     
-    console.log(rect, );
+    this.ctrlContainer.style.width = `${r.width}px`;
+    this.ctrlContainer.style.height = `${r.height}px`;
   }
 
   getMinTime () : number {
@@ -51,24 +67,34 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     return this.items[this.items.length - 1].Start + this.items[this.items.length - 1].Duration;
   }
   
-  drawDiamond (x: number, y: number, w: number) {
+  drawDiamond (x: number, text: string | null = null) {
     if (!this.ctx)
       return;
   
+    let w = 9; 
+    const y = 16;
     this.ctx.save();
-    
-    this.ctx.lineWidth = 1;
-    this.ctx.strokeStyle = 'red';
     
     this.ctx.translate(x, y);
     this.ctx.rotate(Math.PI / 4);
 
-    this.ctx.beginPath();
-    this.ctx.moveTo(0, 0);
-    for (var i = 0; i < 3; i++)
-    {
-      this.ctx.lineTo(8, 8);
+    if (text) {
+      this.ctx.fillStyle = "gold";  
+      this.ctx.fillRect(-w/2 - 2 , -w / 2 - 2, w + 4, w + 4); 
+
+      this.ctx.lineWidth = 3;
+      this.ctx.strokeStyle = "gold";
+      this.ctx.beginPath();
+      this.ctx.moveTo (0,0);
+      this.ctx.lineTo (8, 8);
+      this.ctx.stroke();
     }
+
+    this.ctx.lineWidth = 1;
+    this.ctx.strokeStyle = "salmon";
+    this.ctx.beginPath();
+    this.ctx.moveTo (0,0);
+    this.ctx.lineTo (8, 8);
     this.ctx.stroke();
 
     this.ctx.fillStyle = "salmon";
@@ -77,6 +103,12 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     this.ctx.fillRect(-w/2 + 2 , -w/2 + 2, w - 4, w - 4); 
 
     this.ctx.restore();
+
+    if (text) {
+      this.ctx.font = "12px Roboto";
+      const tm = this.ctx.measureText(text);
+      this.ctx.strokeText(text, x - tm.width / 2, y - 8);
+    }
   }
 
   redraw () {
@@ -84,7 +116,8 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     if (this.ctx == null || !this.items.length)
       return;
 
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     let i = 0;  
     //Skip all items below start point
     while (i < this.items.length && this.items[i].Start < this.timeScale.minTime)
@@ -93,85 +126,25 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     if (i >= this.items.length || this.items[0].Start >= this.timeScale.maxTime) 
       return;
 
-    let dw = 0;
+    let lastX = -1000;
     //Draw all items in time range 
+    let n = 0;
     while (i < this.items.length && this.items[i].Start <= this.timeScale.maxTime) {
-      this.drawDiamond (this.timeScale.timeToPx(this.items[i].Start), 10, 8);
-      i++;
-    } 
-  }
-  /*
-  redraw2 () {
-
-    while (this.ctrlContainer.firstChild) {
-      this.ctrlContainer.removeChild(this.ctrlContainer.firstChild);
-    }
-
-    let i = 0;
-    let totalW = 0;
-    let w: number;
-
-    //Skip all items below start point
-    while (i < this.items.length && this.items[i].Start + this.items[i].Duration <= this.timeScale.minTime)
-      i++;
-
-    if (i >= this.items.length || this.items[0].Start >= this.timeScale.maxTime) 
-      return;
-
-    //Partial 1st item draw
-    if (this.items[i].Start < this.timeScale.minTime) {  
-      w = this.timeScale.durationToPx(this.items[i].Start + this.items[i].Duration - this.timeScale.minTime);
-      const el = this.createPoint(this.items[i], w, "");
-      //el.classList.add (this.items[i].State);
-      totalW = w;
-      i++;
-    }
-
-    //Add empty span at the beginning
-    if (this.items.length > 0 && this.items[0].Start > this.timeScale.minTime) {
-      w = this.timeScale.durationToPx(this.items[0].Start - this.timeScale.minTime);
-      
-      const el = this.createPoint(null, w, "");
-      el.classList.add ("_EmptyState_");
-      //el.innerText = this.items[0].State;
-      totalW = w;
-    }
-    
-    let dw = 0;
-    //Draw all items in time range 
-    while (totalW < this.timeScale.widthPx && i < this.items.length) {
-      w = this.timeScale.durationToPx(this.items[i].Duration);
-      if (w < 1) {
-        dw += w;
-        w = 0;
-      }
-      if (dw >= 1) {
-        w += dw;
-        dw = 0;
-      }
-
-      if (totalW + w >= this.timeScale.widthPx)
-        w = this.timeScale.widthPx - totalW;
-      
-      totalW += w; 
-      if (w > 0) {
-        const el = this.createPoint(this.items[i], w, (this.items[i].Duration / 60000).toString());
-        //el.classList.add (this.items[i].State);
+      let x = this.timeScale.timeToPx(this.items[i].Start);
+      if (this.items[i].Selected || x - lastX >= 4) {     
+        if (this.items[i].Selected) {
+          this.drawDiamond ( x, this.datePipe.transform(this.items[i].Start, "yy-MM-dd HH:mm:ss.SSS"));
+        }
+        else {
+          this.drawDiamond (x);
+        }
+        
+        lastX = x;
+        n++;
       }
       i++;
     } 
   }
-
-  createPoint (item: any, w: number, text: string) {
-    const el = document.createElement("div");
-    el.innerText = text;
-    
-    el.classList.add ("scalePointItem");
-    el.style.width = "" + w + "px";
-    this.ctrlContainer.appendChild(el);
-    return el;
-  }
-*/
 
   onMouseWheel (evt: any) {
 
@@ -187,8 +160,18 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     this.timeScale.startDrag(offsetInPx);
 
 
-    const yOffsetInPx = evt.y - this.ctrlContainer.getBoundingClientRect().top;
-    this.drawDiamond (offsetInPx, yOffsetInPx, 10);
+    const item = this.getNearestItem (offsetInPx); 
+    console.log("item:", item);
+    if (item) {
+      item.Selected = !item.Selected;
+      if (item.Selected)
+        this.drawDiamond (this.timeScale.timeToPx(item.Start), this.datePipe.transform(item.Start, "yy-MM-dd HH:mm:ss.SSS"));
+       else
+         this.redraw(); 
+    }
+
+    //const yOffsetInPx = evt.y - this.ctrlContainer.getBoundingClientRect().top;
+    //this.drawDiamond (offsetInPx, yOffsetInPx, 10);
   }
 
   drag (evt: any) {
@@ -205,4 +188,34 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
 
   }
 
+  getNearestItem (x: number) {
+    if (!this.items.length)
+      return null;
+
+    const time = this.timeScale.pxToTime (x);
+    const minTime = this.timeScale.pxToTime (x - 5);
+    const maxTime = this.timeScale.pxToTime (x + 5);
+
+    if (this.items[0].Start > maxTime)
+      return null;
+    
+    if (this.items[this.items.length - 1].Start < minTime)
+      return null;
+
+    let i = 0;
+    while (i < this.items.length && this.items[i].Start <= minTime) i++;
+
+    let ret = null;
+    let dt = maxTime - minTime + 1;
+    let ct;
+    while (i < this.items.length && this.items[i].Start <= maxTime) {
+      ct = Math.abs(this.items[i].Start - time);
+      if (ct < dt) {
+        ret = this.items[i];
+        dt = ct;
+      }
+      i++;
+    }
+    return ret;
+  }
 }

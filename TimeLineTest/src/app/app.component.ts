@@ -14,10 +14,8 @@ export class AppComponent {
   constructor () {
     this.Series = [];
 
-    let s = { "type":'time-span', "items":  this.getItems() };
-    this.Series.push (s); 
-    this.Series.push ( { "type":'time-point', "items": s.items});
-    this.Series.push ( s );
+    this.Series.push ({ "type":'time-span', "items":  this.createDummyModel(1000) });
+    this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
   }
 
   getItems () {
@@ -53,4 +51,29 @@ export class AppComponent {
     return res;
   }  
 
+  createDummyModel (n: number) {
+    const states = [];
+    const stateNames = ["Active", "Service", "Ready", "None", "Error", "Maintenance", "Standby"];
+
+    let time = (new Date (2022, 10, 28)).getTime();
+    let lastState = null;
+
+    while (states.length < n) {
+        let st = stateNames[Math.floor(Math.random() * stateNames.length)];
+        if (st === lastState)
+          continue;
+        
+        let state = {
+          "State": st,
+          "Duration": Math.floor(Math.random() * 120_000),
+          "Start": time
+        }
+
+        lastState  =st;
+        time += state.Duration;
+        states.push(state);
+    }
+
+    return states;
+}
 }
