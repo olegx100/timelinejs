@@ -73,7 +73,7 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     return this.items[this.items.length - 1].Start + this.items[this.items.length - 1].Duration;
   }
   
-  drawPoint (x: number, text: string | null = null) {
+  drawPoint (x: number, item: any) {
     if (!this.ctx)
       return;
   
@@ -85,7 +85,7 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     
     let w = this.glyphSize / 2;
 
-    if (text) {
+    if (item.Selected) {
       this.ctx.fillStyle = "gold";  
       this.ctx.fillRect(-w - 2 , -w - 2, this.glyphSize + 4, this.glyphSize + 4); 
 
@@ -95,6 +95,8 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
       this.ctx.moveTo (0,0);
       this.ctx.lineTo (8, 8);
       this.ctx.stroke();
+
+      this.createTooltip (x, y, item);
     }
 
     this.ctx.lineWidth = 1;
@@ -110,24 +112,20 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     this.ctx.fillRect(-w + 2 , -w + 2, this.glyphSize - 4, this.glyphSize - 4); 
 
     this.ctx.restore();
-
-    if (text) {
 /*      
+    if (text) {
+
       this.ctx.font = "100 12px Roboto";
       const tm = this.ctx.measureText(text);
       let h = tm.actualBoundingBoxAscent + tm.fontBoundingBoxDescent + 6;
       console.log (tm);
-
       this.ctx.fillStyle = "brown";
       this.ctx.fillRect(x - tm.width / 2 - 10, y - 30, tm.width + 20, h); 
-      
       this.ctx.fillStyle = "lemonchiffon";
       this.ctx.fillRect(x - tm.width / 2 - 9, y - 29, tm.width + 18, h - 2); 
-
       this.ctx.strokeText(text, x - tm.width / 2 - 2, y - 17);
-*/
-      this.createTooltip (x, y, text);
     }
+*/
   }
 
   redraw () {
@@ -161,15 +159,9 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     while (i < this.items.length && this.items[i].Start <= this.timeScale.maxTime) {
       let x = this.timeScale.timeToPx(this.items[i].Start);
       if (this.items[i].Selected || x - lastX >= 4) {     
-        if (this.items[i].Selected) {
-          this.drawPoint ( x, this.datePipe.transform(this.items[i].Start, "yy-MM-dd HH:mm:ss.SSS"));
-        }
-        else {
-          this.drawPoint (x);
-        }
-        
-        lastX = x;
-        n++;
+          this.drawPoint (x, this.items[i]);
+          lastX = x;
+          n++;
       }
       i++;
     } 
@@ -204,11 +196,7 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     console.log("item:", item);
     if (item) {
       item.Selected = !item.Selected;
-      let text = null;
-      if (item.Selected) 
-         text = this.datePipe.transform(item.Start, "yy-MM-dd HH:mm:ss.SSS");
-        
-      this.drawPoint (this.timeScale.timeToPx(item.Start), text);
+      this.drawPoint (this.timeScale.timeToPx(item.Start), item);
     }
   }
 
@@ -267,11 +255,14 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     }
   }
 
-  private createTooltip(x: number, y: number, text: string) {
-    this.removeTooltip();
-
-    const rect = this.ctrlContainer.getBoundingClientRect();
+  private createTooltip(x: number, y: number, item: any) {
     console.log ("createTooltip");
+    this.removeTooltip();
+    let text = this.datePipe.transform(item.Start, "yy-MM-dd HH:mm:ss.SSS");
+    if (!text)
+      return;
+    
+    const rect = this.ctrlContainer.getBoundingClientRect();
     let popup = document.createElement('div');
     popup.innerHTML = text;
     popup.classList.add("tooltip");
