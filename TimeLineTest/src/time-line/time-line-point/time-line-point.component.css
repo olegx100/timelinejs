@@ -1,0 +1,34 @@
+.timelinePointContainer {
+    border: none;
+    margin: none;
+    padding: none;
+    width :100%;
+    height: 24px;    
+}
+
+.scalePointItem {
+    border-left: 1px dimgray solid;
+    
+    box-sizing: border-box;
+    overflow: hidden;
+    padding-left: 0.0rem;
+    padding-bottom: 0.1rem;
+    padding-top: 0.1rem;
+}
+
+.diamond {
+    border: solid black;
+    border-width: 0 6px 6px 0;
+    display: inline-block;
+    transform: rotate(-45deg);
+  }
+
+  .triangle {
+    box-sizing: border-box;
+	width: 0px;
+	height: 0px;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 10px solid red;
+}
+  

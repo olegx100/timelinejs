@@ -14,12 +14,9 @@ export class AppComponent {
   constructor () {
     this.Series = [];
 
-    this.Series.push ( { "type":'time-point', "items": []});
     let s = { "type":'time-span', "items":  this.getItems() };
     this.Series.push (s); 
-
-    this.Series.push ( { "type":'time-point', "items": []});
-    this.Series.push ( { "type":'time-point', "items": []});
+    this.Series.push ( { "type":'time-point', "items": s.items});
     this.Series.push ( s );
   }
 

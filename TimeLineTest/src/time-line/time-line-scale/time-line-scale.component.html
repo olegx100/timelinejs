@@ -4,7 +4,7 @@
         <app-time-line-main [items]="series.items" ></app-time-line-main>
     </ng-container>
     <ng-container *ngIf="series.type === 'time-point'">
-        <div>time-point control is not supported yet</div>
+        <app-time-line-point [items]="series.items"></app-time-line-point>
     </ng-container>
 </ng-container>
 <div #timelineScaleContainer class="timelineScaleContainer"></div>
