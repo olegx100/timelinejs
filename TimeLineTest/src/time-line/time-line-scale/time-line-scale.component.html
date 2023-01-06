@@ -4,7 +4,7 @@
         <app-time-line-main [items]="series.items" ></app-time-line-main>
     </ng-container>
     <ng-container *ngIf="series.type === 'time-point'">
-        <app-time-line-point [items]="series.items"></app-time-line-point>
+        <app-time-line-point [items]="series.items" [PointSize]="9"></app-time-line-point>
     </ng-container>
 </ng-container>
 <div #timelineScaleContainer class="timelineScaleContainer"></div>

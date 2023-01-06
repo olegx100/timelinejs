@@ -14,8 +14,11 @@ export class AppComponent {
   constructor () {
     this.Series = [];
 
-    this.Series.push ({ "type":'time-span', "items":  this.createDummyModel(1000) });
     this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
+    this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
+    this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
+    this.Series.push ({ "type":'time-span', "items":  this.createDummyModel(1000) });
+    
   }
 
   getItems () {
