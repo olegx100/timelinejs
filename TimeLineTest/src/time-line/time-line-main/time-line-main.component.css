@@ -17,6 +17,8 @@
     text-align: center;
     display: inline-block;
     overflow: hidden;
+    user-select: none;
+    pointer-events: none;
 }
 
 ._EmptyState_ {
