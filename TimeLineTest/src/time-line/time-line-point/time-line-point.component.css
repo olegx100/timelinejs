@@ -1,5 +1,5 @@
 .timelinePointContainer {
-    margin: 1 px;
+    border: 1px solid coral;
     margin: none;
     padding: none;
     display: block;

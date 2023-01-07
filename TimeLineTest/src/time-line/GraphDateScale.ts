@@ -2,6 +2,7 @@ const minTimeLimit = -2208997240000;
 
 export interface IScaleEventReceiver {
   redraw () : void;
+  resize () : void;
   getMinTime () : number;
   getMaxTime () : number;
 }
@@ -114,6 +115,18 @@ export class GraphDateScale {
     }
   }
 
+  public raiseResizeEvent () {
+    for (let cb of this.callbacks) 
+    {
+      try {
+        cb.resize();
+      } 
+      catch(ex)  {
+        console.error ("Error:", ex);
+      }
+    }
+  }
+  
   //Drag and drop handling
   inDrag: boolean = false;
   dragStartX: number = 0;

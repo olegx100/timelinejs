@@ -47,8 +47,9 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
     this.timeLineScaleContainer.addEventListener('mousemove', this.drag.bind(this));      
 
     this.timeScale.widthPx = this.timeLineScaleContainer.clientWidth;
+    window.addEventListener ('resize', this.onWndResize.bind(this));
+    this.timeScale.raiseResizeEvent();
     this.timeScale.autoScale();
-    window.addEventListener ('resize', this.resize.bind(this));
   }
 
   onMouseWheel (evt: any) {
@@ -147,10 +148,13 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
     return NaN;
   }
 
-  resize (evt: any): void {
-    console.log("Resize");
+  resize () {
+
+  }
+
+  onWndResize (evt: any): void {
     this.timeScale.widthPx = this.timeLineScaleContainer.clientWidth;
-    //this.timeScale.autoScale();    
+    this.timeScale.raiseResizeEvent();
     this.timeScale.raiseRedrawEvent();
   }
 }

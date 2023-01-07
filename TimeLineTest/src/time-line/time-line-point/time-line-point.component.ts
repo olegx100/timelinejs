@@ -34,23 +34,24 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     this.ctrlContainer.addEventListener("mousedown", this.startDrag.bind(this));
     this.ctrlContainer.addEventListener("mouseup", this.endDrag.bind(this));
     this.ctrlContainer.addEventListener('mousemove', this.drag.bind(this));
-
-    this.init ();
+    window.addEventListener ('resize', this.resize.bind(this));
   }
 
-  init () {
+  resize () {
     if (!this.ctx)
       return;
 
     const r = this.ctrlContainer.getBoundingClientRect();
 
     const dpr = window.devicePixelRatio;
-    this.ctx.canvas.width = r.width * dpr;
+    this.ctx.canvas.width = this.timeScale.widthPx * dpr;
     this.ctx.canvas.height = r.height * dpr;
     this.ctx.scale(dpr, dpr);
-    
-    this.ctrlContainer.style.width = `${r.width}px`;
-    this.ctrlContainer.style.height = `${r.height}px`;
+
+    this.ctrlContainer.style.width = `${this.timeScale.widthPx}px`;
+    //this.ctrlContainer.style.height = `${r.height}px`;
+
+    let r1 = this.ctrlContainer.getBoundingClientRect();
   }
 
   getMinTime () : number {
@@ -94,13 +95,13 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     }
 
     this.ctx.lineWidth = 1;
-    this.ctx.strokeStyle = "salmon";
+    this.ctx.strokeStyle = "coral";
     this.ctx.beginPath();
     this.ctx.moveTo (0,0);
     this.ctx.lineTo (8, 8);
     this.ctx.stroke();
 
-    this.ctx.fillStyle = "salmon";
+    this.ctx.fillStyle = "coral";
     this.ctx.fillRect(-w, -w, this.glyphSize, this.glyphSize); 
     this.ctx.fillStyle = "aqua";
     this.ctx.fillRect(-w + 2 , -w + 2, this.glyphSize - 4, this.glyphSize - 4); 

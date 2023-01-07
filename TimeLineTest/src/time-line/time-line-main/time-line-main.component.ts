@@ -35,11 +35,11 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
     this.mainContainer.addEventListener("mouseup", this.endDrag.bind(this));
     this.mainContainer.addEventListener('mousemove', this.drag.bind(this));
      
-    this.start();
+    this.calc();
   }
 
   //do it on items items
-  public start () {
+  public calc () {
     this.items.sort ((i1, i2) => { return i1.Start - i2.Start});
     //Insert empty states to fill gaps
     for(let i = 1; i < this.items.length; i++) {
@@ -177,5 +177,9 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
       return NaN;
 
     return this.items[this.items.length - 1].Start + this.items[this.items.length - 1].Duration;
+  }
+
+  resize () {
+
   }
 } 
