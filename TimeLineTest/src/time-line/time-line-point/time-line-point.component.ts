@@ -12,6 +12,8 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
   @ViewChild('timelinePointContainer', { static:false }) rootEl: ElementRef<HTMLCanvasElement>;
   @Input('items') items: Array<any> = [];
   @Input('PointSize') glyphSize: number;
+  @Input('BorderColor') borderColor: string;
+  @Input('FillColor') fillColor: string;
 
   ctrlContainer: HTMLCanvasElement; 
   private ctx: CanvasRenderingContext2D | null;
@@ -30,6 +32,9 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
   ngAfterViewInit() {
     this.ctrlContainer = this.rootEl.nativeElement;
     this.ctrlContainer.addEventListener("mousedown", this.mouseDown.bind(this));
+    
+    if (this.glyphSize <= 0)
+      this.glyphSize = 9;
 
     this.ctx = this.rootEl.nativeElement.getContext("2d", { alpha: false });
     this.timeScale.registerRedrawEventCallback(this);
@@ -94,15 +99,16 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     }
 
     this.ctx.lineWidth = 1;
-    this.ctx.strokeStyle = "coral";
+    this.ctx.strokeStyle = this.borderColor;
     this.ctx.beginPath();
     this.ctx.moveTo (0, 0);
     this.ctx.lineTo (8, 8);
     this.ctx.stroke();
 
-    this.ctx.fillStyle = "coral";
+    this.ctx.fillStyle = this.borderColor;
     this.ctx.fillRect(-w, -w, this.glyphSize, this.glyphSize); 
-    this.ctx.fillStyle = "aqua";
+
+    this.ctx.fillStyle = this.fillColor;
     this.ctx.fillRect(-w + 2 , -w + 2, this.glyphSize - 4, this.glyphSize - 4); 
 
     this.ctx.restore();

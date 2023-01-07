@@ -13,12 +13,42 @@ export class AppComponent {
   constructor () {
     this.Series = [];
 
-    this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
+    this.Series.push ({ 
+      "type":'time-point', 
+      "items": this.createDummyModel(1000), 
+      "legend": {
+        "borderColor": "coral", 
+        "fillColor": "aqua", 
+        "pointSize": 11
+      }
+    });
+
     this.Series.push ({ "type":'time-scale'});
-    this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
+
+    this.Series.push ({ 
+      "type":'time-point', 
+      "items": this.createDummyModel(1000), 
+      "legend": {
+        "borderColor": "red", 
+        "fillColor": "pink", 
+        "pointSize": 9
+      }
+    });
+
     this.Series.push ({ "type":'time-span', "items":  this.createDummyModel(1000) });
+
     this.Series.push ({ "type":'time-scale'});
-    this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
+
+    this.Series.push ({ 
+      "type":'time-point', 
+      "items": this.createDummyModel(1000), 
+      "legend": {
+        "borderColor": "blue", 
+        "fillColor": "aqua", 
+        "pointSize": 13
+      }
+    });
+
     this.Series.push ({ "type":'time-scale'});
    
   }

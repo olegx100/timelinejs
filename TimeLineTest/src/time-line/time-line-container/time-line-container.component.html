@@ -5,7 +5,11 @@
             <app-time-line-main [items]="series.items" ></app-time-line-main>
         </ng-container>
         <ng-container *ngIf="series.type === 'time-point'">
-            <app-time-line-point [items]="series.items" [PointSize]="9"></app-time-line-point>
+            <app-time-line-point [items]="series.items" 
+                [PointSize]="series.legend.pointSize" 
+                [BorderColor]="series.legend?.borderColor" 
+                [FillColor]="series.legend?.fillColor" 
+                ></app-time-line-point>
         </ng-container>
         <ng-container *ngIf="series.type === 'time-scale'">
             <app-time-line-scale [nScales]="5"></app-time-line-scale>
