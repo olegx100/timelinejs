@@ -1,10 +1,1 @@
-
-<ng-container *ngFor="let series of Series; let i = index">
-    <ng-container *ngIf="series.type === 'time-span'">
-        <app-time-line-main [items]="series.items" ></app-time-line-main>
-    </ng-container>
-    <ng-container *ngIf="series.type === 'time-point'">
-        <app-time-line-point [items]="series.items" [PointSize]="9"></app-time-line-point>
-    </ng-container>
-</ng-container>
 <div #timelineScaleContainer class="timelineScaleContainer"></div>

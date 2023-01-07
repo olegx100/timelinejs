@@ -30,11 +30,6 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
 
   ngAfterViewInit() {
     this.mainContainer = this.rootEl.nativeElement;
-    this.mainContainer.addEventListener('wheel', this.onMouseWheel.bind(this));
-    this.mainContainer.addEventListener("mousedown", this.startDrag.bind(this));
-    this.mainContainer.addEventListener("mouseup", this.endDrag.bind(this));
-    this.mainContainer.addEventListener('mousemove', this.drag.bind(this));
-     
     this.calc();
   }
 
@@ -134,24 +129,6 @@ export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
       }
       i++;
     } 
-  }
-
-  onMouseWheel (evt: any) {
-    this.timeScale.onMouseWheel (evt, this.mainContainer);
-  }
-
-  startDrag (evt: any) {
-    const offsetInPx = evt.x - this.mainContainer.getBoundingClientRect().left;
-    this.timeScale.startDrag(offsetInPx);
-  }
-
-  drag (evt: any) {
-    const offsetInPx = evt.x - this.mainContainer.getBoundingClientRect().left;
-    this.timeScale.drag(offsetInPx, evt.buttons);
-  }
-
-  endDrag (evt: any) {
-    this.timeScale.endDrag();
   }
 
   //for debug

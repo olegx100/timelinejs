@@ -1,5 +1,7 @@
 .timelineMainContainer {
-    border: 1px coral solid;
+    border: none;
+    margin: none;
+    padding: none;
     border-bottom: none;
 
     display: flex;

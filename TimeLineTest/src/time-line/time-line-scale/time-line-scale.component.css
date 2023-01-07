@@ -1,5 +1,7 @@
 .timelineScaleContainer {
-    border: 1px coral solid;
+    border: none;
+    padding: none;
+    margin: none;
     border-top: none;
 
     display: flex;

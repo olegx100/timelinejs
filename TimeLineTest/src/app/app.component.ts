@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
@@ -15,10 +14,13 @@ export class AppComponent {
     this.Series = [];
 
     this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
-    this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
+    this.Series.push ({ "type":'time-scale'});
     this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
     this.Series.push ({ "type":'time-span', "items":  this.createDummyModel(1000) });
-    
+    this.Series.push ({ "type":'time-scale'});
+    this.Series.push ({ "type":'time-point', "items": this.createDummyModel(1000)});
+    this.Series.push ({ "type":'time-scale'});
+   
   }
 
   getItems () {
@@ -58,7 +60,7 @@ export class AppComponent {
     const states = [];
     const stateNames = ["Active", "Service", "Ready", "None", "Error", "Maintenance", "Standby"];
 
-    let time = (new Date (2022, 10, 28)).getTime();
+    let time = (new Date (2022, 9, 28)).getTime();
     let lastState = null;
 
     while (states.length < n) {

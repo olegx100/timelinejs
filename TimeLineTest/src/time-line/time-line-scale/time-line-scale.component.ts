@@ -8,7 +8,6 @@ import { TimeScaleCalc } from '../TimeScaleCalc';
   templateUrl: './time-line-scale.component.html',
   styleUrls: ['./time-line-scale.component.css'], 
   encapsulation: ViewEncapsulation.None,
-  providers:[GraphDateScale]
 })
 
 export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
@@ -25,8 +24,6 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
   timeFormat     = "HH:mm:ss";
   timeFormatMs   = "HH:mm:ss.SSS";
 
-  @Input("Series") Series: Array<any>; 
-
   constructor(private timeScale: GraphDateScale) { 
     this.timelineCalc  = new TimeScaleCalc();
     this.datePipe = new DatePipe ("en-US");
@@ -41,33 +38,6 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
       return;
     
     this.timeLineScaleContainer = this.scaleRootEl.nativeElement;
-    this.timeLineScaleContainer.addEventListener('wheel', this.onMouseWheel.bind(this));
-    this.timeLineScaleContainer.addEventListener("mousedown", this.startDrag.bind(this));
-    this.timeLineScaleContainer.addEventListener("mouseup", this.endDrag.bind(this));
-    this.timeLineScaleContainer.addEventListener('mousemove', this.drag.bind(this));      
-
-    this.timeScale.widthPx = this.timeLineScaleContainer.clientWidth;
-    window.addEventListener ('resize', this.onWndResize.bind(this));
-    this.timeScale.raiseResizeEvent();
-    this.timeScale.autoScale();
-  }
-
-  onMouseWheel (evt: any) {
-    this.timeScale.onMouseWheel (evt, this.timeLineScaleContainer);
-  }
-
-  startDrag (evt: any) {
-    const offsetInPx = evt.x - this.timeLineScaleContainer.getBoundingClientRect().left;
-    this.timeScale.startDrag(offsetInPx);
-  }
-
-  drag (evt: any) {
-    const offsetInPx = evt.x - this.timeLineScaleContainer.getBoundingClientRect().left;
-    this.timeScale.drag(offsetInPx, evt.buttons);
-  }
-
-  endDrag (evt: any) {
-    this.timeScale.endDrag();
   }
 
   getScaleFormatStr (scaleSize: number) {
@@ -145,11 +115,5 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
 
   resize () {
 
-  }
-
-  onWndResize (evt: any): void {
-    this.timeScale.widthPx = this.timeLineScaleContainer.clientWidth;
-    this.timeScale.raiseResizeEvent();
-    this.timeScale.raiseRedrawEvent();
   }
 }

@@ -28,13 +28,11 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
 
   ngAfterViewInit() {
     this.ctrlContainer = this.rootEl.nativeElement;
+    this.ctrlContainer.addEventListener("mousedown", this.mouseDown.bind(this));
+
     this.ctx = this.rootEl.nativeElement.getContext("2d", { alpha: false });
     this.timeScale.registerRedrawEventCallback(this);
-    this.ctrlContainer.addEventListener('wheel', this.onMouseWheel.bind(this));
-    this.ctrlContainer.addEventListener("mousedown", this.startDrag.bind(this));
-    this.ctrlContainer.addEventListener("mouseup", this.endDrag.bind(this));
-    this.ctrlContainer.addEventListener('mousemove', this.drag.bind(this));
-    window.addEventListener ('resize', this.resize.bind(this));
+    //window.addEventListener ('resize', this.resize.bind(this));
   }
 
   resize () {
@@ -87,7 +85,7 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
       this.ctx.lineWidth = 3;
       this.ctx.strokeStyle = "gold";
       this.ctx.beginPath();
-      this.ctx.moveTo (0,0);
+      this.ctx.moveTo (0, 0);
       this.ctx.lineTo (8, 8);
       this.ctx.stroke();
 
@@ -97,7 +95,7 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = "coral";
     this.ctx.beginPath();
-    this.ctx.moveTo (0,0);
+    this.ctx.moveTo (0, 0);
     this.ctx.lineTo (8, 8);
     this.ctx.stroke();
 
@@ -170,33 +168,6 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     }
   }
 
-  onMouseWheel (evt: any) {
-    this.timeScale.onMouseWheel (evt, this.ctrlContainer);
-  }
-
-  startDrag (evt: any) {
-    const offsetInPx = evt.x - this.ctrlContainer.getBoundingClientRect().left;
-    this.timeScale.startDrag(offsetInPx);
-
-    const yOffsetInPx = evt.y - this.ctrlContainer.getBoundingClientRect().top;
-    this.unselectAll();
-    this.redraw();
-    const item = this.getNearestItem (offsetInPx, yOffsetInPx); 
-    if (item) {
-      item.Selected = !item.Selected;
-      this.drawPoint (this.timeScale.timeToPx(item.Start), item);
-    }
-  }
-
-  drag (evt: any) {
-    const offsetInPx = evt.x - this.ctrlContainer.getBoundingClientRect().left;
-    this.timeScale.drag(offsetInPx, evt.buttons);
-  }
-
-  endDrag (evt: any) {
-    this.timeScale.endDrag();
-  }
-
   setIems () : void{
     this.items = [];
 
@@ -258,5 +229,17 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
 
     document.body.appendChild(popup);
     this.popup = popup;
+  }
+
+  mouseDown (evt: any) {
+    const offsetInPx = evt.x - this.ctrlContainer.getBoundingClientRect().left;
+    const yOffsetInPx = evt.y - this.ctrlContainer.getBoundingClientRect().top;
+    this.unselectAll();
+    this.redraw();
+    const item = this.getNearestItem (offsetInPx, yOffsetInPx); 
+    if (item) {
+      item.Selected = !item.Selected;
+      this.drawPoint (this.timeScale.timeToPx(item.Start), item);
+    }
   }
 }
