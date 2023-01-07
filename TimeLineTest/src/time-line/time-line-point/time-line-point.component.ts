@@ -17,6 +17,7 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
   private ctx: CanvasRenderingContext2D | null;
   datePipe: DatePipe;
   popup: HTMLDivElement | null;
+  selectedItem: any | null;
 
   yLine = 32;
 
@@ -159,12 +160,11 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     } 
   }
 
-  unselectAll () {
+  unselectItem () {
     this.removeTooltip();
-
-    for (let i = 0; i<this.items.length; i++) {
-      if (this.items[i].Selected)
-        this.items[i].Selected = undefined;
+    if (this.selectedItem) {
+      this.selectedItem.Selected = undefined;
+      this.selectedItem = null;
     }
   }
 
@@ -234,11 +234,12 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
   mouseDown (evt: any) {
     const offsetInPx = evt.x - this.ctrlContainer.getBoundingClientRect().left;
     const yOffsetInPx = evt.y - this.ctrlContainer.getBoundingClientRect().top;
-    this.unselectAll();
+    this.unselectItem();
     this.redraw();
     const item = this.getNearestItem (offsetInPx, yOffsetInPx); 
     if (item) {
-      item.Selected = !item.Selected;
+      item.Selected = true;
+      this.selectedItem = item;
       this.drawPoint (this.timeScale.timeToPx(item.Start), item);
     }
   }
