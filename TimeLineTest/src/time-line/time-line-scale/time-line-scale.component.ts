@@ -48,6 +48,7 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
 
     this.timeScale.widthPx = this.timeLineScaleContainer.clientWidth;
     this.timeScale.autoScale();
+    window.addEventListener ('resize', this.resize.bind(this));
   }
 
   onMouseWheel (evt: any) {
@@ -144,5 +145,12 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
 
   getMaxTime () : number {
     return NaN;
+  }
+
+  resize (evt: any): void {
+    console.log("Resize");
+    this.timeScale.widthPx = this.timeLineScaleContainer.clientWidth;
+    //this.timeScale.autoScale();    
+    this.timeScale.raiseRedrawEvent();
   }
 }

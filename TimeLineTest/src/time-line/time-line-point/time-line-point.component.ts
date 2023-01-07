@@ -16,7 +16,6 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
   ctrlContainer: HTMLCanvasElement; 
   private ctx: CanvasRenderingContext2D | null;
   datePipe: DatePipe;
-  rect: DOMRect;
   popup: HTMLDivElement | null;
 
   yLine = 32;
@@ -29,7 +28,6 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
 
   ngAfterViewInit() {
     this.ctrlContainer = this.rootEl.nativeElement;
-    console.log (this.rootEl.nativeElement);
     this.ctx = this.rootEl.nativeElement.getContext("2d", { alpha: false });
     this.timeScale.registerRedrawEventCallback(this);
     this.ctrlContainer.addEventListener('wheel', this.onMouseWheel.bind(this));
@@ -45,10 +43,6 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
       return;
 
     const r = this.ctrlContainer.getBoundingClientRect();
-    if (this.rect && r.width === this.rect.width && r.height === this.rect.height)
-      return;
-      
-    this.rect = r;
 
     const dpr = window.devicePixelRatio;
     this.ctx.canvas.width = r.width * dpr;
@@ -118,7 +112,6 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
       this.ctx.font = "100 12px Roboto";
       const tm = this.ctx.measureText(text);
       let h = tm.actualBoundingBoxAscent + tm.fontBoundingBoxDescent + 6;
-      console.log (tm);
       this.ctx.fillStyle = "brown";
       this.ctx.fillRect(x - tm.width / 2 - 10, y - 30, tm.width + 20, h); 
       this.ctx.fillStyle = "lemonchiffon";
@@ -193,7 +186,6 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     this.unselectAll();
     this.redraw();
     const item = this.getNearestItem (offsetInPx, yOffsetInPx); 
-    console.log("item:", item);
     if (item) {
       item.Selected = !item.Selected;
       this.drawPoint (this.timeScale.timeToPx(item.Start), item);
@@ -256,7 +248,6 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
   }
 
   private createTooltip(x: number, y: number, item: any) {
-    console.log ("createTooltip");
     this.removeTooltip();
     let text = this.datePipe.transform(item.Start, "yy-MM-dd HH:mm:ss.SSS");
     if (!text)
