@@ -53,12 +53,7 @@ export class TimeLineScaleComponent implements OnInit, IScaleEventReceiver {
   }
 
   onMouseWheel (evt: any) {
-
-    const offsetInPx = evt.x - this.timeLineScaleContainer.getBoundingClientRect().left;
-    if (evt.wheelDelta > 0)
-      this.timeScale.changeScale (offsetInPx, 1.1);
-    else
-      this.timeScale.changeScale (offsetInPx, 1/1.1);
+    this.timeScale.onMouseWheel (evt, this.timeLineScaleContainer);
   }
 
   startDrag (evt: any) {

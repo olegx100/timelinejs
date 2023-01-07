@@ -84,6 +84,17 @@ export class GraphDateScale {
       return dpx / this._widthPx * (this._maxTime - this._minTime);      
   }
 
+  public onMouseWheel (evt: any, ctrl: HTMLElement) {
+
+    const offsetInPx = evt.x - ctrl.getBoundingClientRect().left;
+    if (evt.wheelDelta > 0)
+      this.changeScale (offsetInPx, 1.1);
+    else
+      this.changeScale (offsetInPx, 1/1.1);
+    
+    evt.preventDefault();   
+  }
+
   public changeScale(xPx: number, upScale: number) : Boolean {
     let timeSpan = this._maxTime - this._minTime;
     if (timeSpan < 1 && upScale > 1)
