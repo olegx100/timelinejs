@@ -16,6 +16,7 @@
     border-left: 1px dimgray solid;
     border-top: 2px dimgray solid;
     
+    white-space: nowrap;
     box-sizing: border-box;
     overflow: hidden;
     padding-left: 0.3rem;
