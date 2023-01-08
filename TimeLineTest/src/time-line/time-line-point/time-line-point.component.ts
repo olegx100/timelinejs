@@ -47,15 +47,15 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
 
     const r = this.ctrlContainer.getBoundingClientRect();
 
-    const dpr = window.devicePixelRatio;
+    let dpr = window.devicePixelRatio;
+    if (dpr < 1)
+      dpr = 1; //fix black area on browser scale < 100%
+
     this.ctx.canvas.width = this.timeScale.widthPx * dpr;
     this.ctx.canvas.height = r.height * dpr;
     this.ctx.scale(dpr, dpr);
 
     this.ctrlContainer.style.width = `${this.timeScale.widthPx}px`;
-    //this.ctrlContainer.style.height = `${r.height}px`;
-
-    let r1 = this.ctrlContainer.getBoundingClientRect();
   }
 
   getMinTime () : number {
