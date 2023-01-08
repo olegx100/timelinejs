@@ -2,7 +2,7 @@
     <div #innerDiv style="height: 0px"></div>
     <ng-container *ngFor="let series of Series; let i = index">
         <ng-container *ngIf="series.type === 'time-span'">
-            <app-time-line-main [items]="series.items" ></app-time-line-main>
+            <app-time-line-span [items]="series.items" ></app-time-line-span>
         </ng-container>
         <ng-container *ngIf="series.type === 'time-point'">
             <app-time-line-point [items]="series.items" 

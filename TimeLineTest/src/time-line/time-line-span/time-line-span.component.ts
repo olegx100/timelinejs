@@ -5,13 +5,13 @@ import { GraphDateScale, IScaleEventReceiver } from '../GraphDateScale';
 const emptyStateName = "_EmptyState_";
 
 @Component({
-  selector: 'app-time-line-main',
-  templateUrl: './time-line-main.component.html',
-  styleUrls: ['./time-line-main.component.css'],
+  selector: 'app-time-line-span',
+  templateUrl: './time-line-span.component.html',
+  styleUrls: ['./time-line-span.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
 
-export class TimeLineMainComponent implements OnInit, IScaleEventReceiver {
+export class TimeLineSpanComponent implements OnInit, IScaleEventReceiver {
   @ViewChild('timelineMainContainer', { static:false }) rootEl: ElementRef<HTMLDivElement>;
 
   @Input('items') items: Array<any> = [];
