@@ -133,8 +133,7 @@ export class TimeLineSpanComponent implements OnInit, IScaleEventReceiver {
 
   //for debug
   timeToStr (time: number) {
-    let pl = new DatePipe ('en-US');
-    return pl.transform (time, "yyyy-MM-dd HH:mm:ss");
+    return this.datePipe.transform (time, "yyyy-MM-dd HH:mm:ss");
   }
 
   getMinTime () : number {
