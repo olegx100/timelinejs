@@ -3,3 +3,9 @@
   border: 1px solid dimgray;
   padding: 2rem;
 }
+
+.title {
+  font-family: Roboto;
+  color:black;
+  text-align: center;
+}
