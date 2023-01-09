@@ -91,7 +91,10 @@ export class TimeLineSpanComponent implements OnInit, IScaleEventReceiver {
     if (this.items[i].Start < this.timeScale.minTime) {  
       w = this.timeScale.durationToPx(this.items[i].Start + this.items[i].Duration - this.timeScale.minTime);
       const el = this.createTimeSpan(this.items[i], w);
-      el.classList.add (this.items[i].State);
+      if (this.items[i].State)
+        el.classList.add (this.items[i].State);
+      else
+        el.classList.add (emptyStateName);
       totalW = w;
       i++;
     }
@@ -125,7 +128,10 @@ export class TimeLineSpanComponent implements OnInit, IScaleEventReceiver {
       totalW += w; 
       if (w > 0) {
         const el = this.createTimeSpan(this.items[i], w);
-        el.classList.add (this.items[i].State);
+        if (this.items[i].State)
+          el.classList.add (this.items[i].State);
+        else
+        el.classList.add (emptyStateName);
       }
       i++;
     } 
