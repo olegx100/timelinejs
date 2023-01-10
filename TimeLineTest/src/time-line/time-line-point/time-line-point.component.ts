@@ -91,8 +91,8 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
       this.ctx.lineWidth = 3;
       this.ctx.strokeStyle = "gold";
       this.ctx.beginPath();
-      this.ctx.moveTo (0, 0);
-      this.ctx.lineTo (8, 8);
+      this.ctx.moveTo (-this.glyphSize, -this.glyphSize);
+      this.ctx.lineTo (this.glyphSize, this.glyphSize);
       this.ctx.stroke();
 
       this.createTooltip (x, y, item);
@@ -101,8 +101,8 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = this.borderColor;
     this.ctx.beginPath();
-    this.ctx.moveTo (0, 0);
-    this.ctx.lineTo (8, 8);
+    this.ctx.moveTo (-this.glyphSize, -this.glyphSize);
+    this.ctx.lineTo (this.glyphSize, this.glyphSize);
     this.ctx.stroke();
 
     this.ctx.fillStyle = this.borderColor;
@@ -139,7 +139,7 @@ export class TimeLinePointComponent implements IScaleEventReceiver {
     this.ctx.beginPath();
 
     this.ctx.lineWidth = 1;
-    this.ctx.strokeStyle = "dimgray";
+    this.ctx.strokeStyle = this.borderColor;
     this.ctx.moveTo(0, this.yLine);
     this.ctx.lineTo(this.ctx.canvas.width, this.yLine);
     this.ctx.stroke();
