@@ -128,5 +128,6 @@ export class TimeLineContainerComponent {
     let midPoint = (min.toX + max.toX) / 2 - offsetInPx;
     this.timeScale.changeScale(midPoint, scale);
     this.touches = evt.touches;
+    evt.preventDefault();
   }
 }
