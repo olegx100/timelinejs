@@ -57,7 +57,8 @@ export class TimeScaleCalc {
 
         if (timeSpanInMsec < mSecInDay){
             let nHours = Math.round(timeSpanInMsec / mSecInHour);
-            currDate.setHours (currDate.getHours(), 0, 0, 0);
+            let hToRound = currDate.getHours() % nHours;
+            currDate.setHours (currDate.getHours() - hToRound, 0, 0, 0);
             return currDate.getTime() + nHours * mSecInHour;
         }
 
