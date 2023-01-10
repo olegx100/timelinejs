@@ -9,6 +9,7 @@ export class AppComponent {
   title = 'TimeLineTest';
 
   public Series: Array<any>;
+  public version = "1.0.0.1";
   
   constructor () {
     this.createSeries();
