@@ -14,7 +14,7 @@ export class AppComponent {
 
   public Series: Array<MyAppSeries>;
   public version = "1.0.1.0";
-  
+
   constructor () {
     this.createSeries();
   }
@@ -58,7 +58,7 @@ export class AppComponent {
     let s1 = new MyAppSeries();
     s1.items = new Array<MyAppTimeLineItem>();
     s1.type = 'time-point';
-    s1.onNewItemSelected = this.onTimePointSelected;
+    s1.onNewItemSelected = this.onTimePointSelected.bind(this);
     s1.items = this.createDummyModel(1000);
     s1.legend = new TimeLinePointLegend();
     s1.legend.borderColor = "coral"; 
@@ -73,7 +73,7 @@ export class AppComponent {
     let s3 = new MyAppSeries();
     s3.items = new Array<MyAppTimeLineItem>();
     s3.type = 'time-point';
-    s3.onNewItemSelected = this.onTimePointSelected;
+    s3.onNewItemSelected = this.onTimePointSelected.bind(this);;
     s3.items = this.createDummyModel(1000);
     s3.legend = new TimeLinePointLegend();
     s3.legend.borderColor = 'red'; 
@@ -83,7 +83,7 @@ export class AppComponent {
 
     let s4 = new MyAppSeries();
     s4.type = 'time-span';
-    s4.onNewItemCreated = this.onNewTimeSpanItemCreated;
+    s4.onNewItemCreated = this.onNewTimeSpanItemCreated.bind(this);;
     s4.items = this.createDummyModel(1000);
     this.Series.push (s4);
 
@@ -93,7 +93,7 @@ export class AppComponent {
 
     let s6 = new MyAppSeries();
     s6.type = 'time-point';
-    s6.onNewItemSelected = this.onTimePointSelected;
+    s6.onNewItemSelected = this.onTimePointSelected.bind(this);;
     s6.items = this.createDummyModel(1000); 
     s6.legend = new TimeLinePointLegend();
     s6.legend.borderColor = 'blue'; 
@@ -119,7 +119,6 @@ export class AppComponent {
         el.classList.add ("_EmptyState_"); //emptyStateName
   }
 
-  
   dp = new DatePipe("en-US");
   onTimePointSelected(item: ITimeLineItem, el: HTMLElement): void {
     let myAppItem = item as MyAppTimeLineItem;
