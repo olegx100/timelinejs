@@ -1,6 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { GraphDateScale, IScaleEventReceiver } from '../GraphDateScale';
+import { ITimeLineItem, ITimeLineItemsProvider } from '../ITimeLineSeriesEvents';
 
 const emptyStateName = "_EmptyState_";
 
@@ -14,7 +15,7 @@ const emptyStateName = "_EmptyState_";
 export class TimeLineSpanComponent implements OnInit, IScaleEventReceiver {
   @ViewChild('timelineMainContainer', { static:false }) rootEl: ElementRef<HTMLDivElement>;
 
-  @Input('items') items: Array<any> = [];
+  @Input('series') series: ITimeLineItemsProvider;
 
   mainContainer: HTMLDivElement; 
   timeFormat = "yy-MM-dd HH:mm:ss";
@@ -35,35 +36,37 @@ export class TimeLineSpanComponent implements OnInit, IScaleEventReceiver {
 
   //do it on items items
   public calc () {
-    this.items.sort ((i1, i2) => { return i1.Start - i2.Start});
-    //Insert empty states to fill gaps
-    for(let i = 1; i < this.items.length; i++) {
-      let duration = this.items[i].Start - this.items[i-1].Start;
-      if (duration < this.items[i-1].Duration || this.items[i-1].Duration < 0)
-        this.items[i-1].Duration = duration;
-      
-      if (duration > this.items[i-1].Duration) {
+    const items = this.series.items;
+    if (!items?.length)
+      return;
 
-        let newStart = this.items[i-1].Start + this.items[i-1].Duration;
+    items.sort ((i1, i2) => { return i1.Start - i2.Start});
+    //Insert empty states to fill gaps
+    for(let i = 1; i < items.length; i++) {
+      let duration = items[i].Start - items[i-1].Start;
+      if (duration < items[i-1].Duration || items[i-1].Duration < 0)
+        items[i-1].Duration = duration;
+      
+      if (duration > items[i-1].Duration) {
+
+        let newStart = items[i-1].Start + items[i-1].Duration;
         let newState = {
           Start: newStart, 
-          Duration:  this.items[i].Start - newStart,
+          Duration: items[i].Start - newStart,
           State: emptyStateName};
         
-        this.items.splice(i, 0, newState);
+        items.splice(i, 0, newState);
         i++;
       }
       
-      if (this.items[i].Duration < 0)
-        this.items[i].Duration = 0;
+      if (items[i].Duration < 0)
+        items[i].Duration = 0;
     }
   }
 
-  createTimeSpan (item: any, w: number) {
+  createTimeSpan (item: ITimeLineItem | null, w: number) {
     const el = document.createElement("div");
-    if (item && item.State != emptyStateName) 
-      el.innerText = item.State;
-    
+    this.series.onNewItemCreated (item, el);
     el.classList.add ("timeLineItem");
     el.style.width = "" + w + "px";
     this.mainContainer.appendChild(el);
@@ -80,39 +83,39 @@ export class TimeLineSpanComponent implements OnInit, IScaleEventReceiver {
     let totalW = 0;
     let w: number;
 
+    const items = this.series?.items;
+    if (!this.series?.items?.length)
+      return;
+
     //Skip all items below start point
-    while (i < this.items.length && this.items[i].Start + this.items[i].Duration <= this.timeScale.minTime)
+    while (i < items.length && items[i].Start + items[i].Duration <= this.timeScale.minTime)
       i++;
 
-    if (i >= this.items.length || this.items[0].Start >= this.timeScale.maxTime) 
+    if (i >= items.length || items[0].Start >= this.timeScale.maxTime) 
       return;
 
     //Partial 1st item draw
-    if (this.items[i].Start < this.timeScale.minTime) {  
-      w = this.timeScale.durationToPx(this.items[i].Start + this.items[i].Duration - this.timeScale.minTime);
-      const el = this.createTimeSpan(this.items[i], w);
-      if (this.items[i].State)
-        el.classList.add (this.items[i].State);
-      else
-        el.classList.add (emptyStateName);
+    if (items[i].Start < this.timeScale.minTime) {  
+      w = this.timeScale.durationToPx(items[i].Start + items[i].Duration - this.timeScale.minTime);
+      const el = this.createTimeSpan(items[i], w);
       totalW = w;
       i++;
     }
 
     //Add empty span at the beginning
-    if (this.items.length > 0 && this.items[0].Start > this.timeScale.minTime) {
-      w = this.timeScale.durationToPx(this.items[0].Start - this.timeScale.minTime);
+    if (items.length > 0 && items[0].Start > this.timeScale.minTime) {
+      w = this.timeScale.durationToPx(items[0].Start - this.timeScale.minTime);
       
       const el = this.createTimeSpan(null, w);
       el.classList.add (emptyStateName);
-      //el.innerText = this.items[0].State;
+      //el.innerText = items[0].State;
       totalW = w;        
     }
     
     let dw = 0;
     //Draw all items in time range 
-    while (totalW < this.timeScale.widthPx && i < this.items.length) {
-      w = this.timeScale.durationToPx(this.items[i].Duration);
+    while (totalW < this.timeScale.widthPx && i < items.length) {
+      w = this.timeScale.durationToPx(items[i].Duration);
       if (w < 1) {
         dw += w;
         w = 0;
@@ -127,11 +130,7 @@ export class TimeLineSpanComponent implements OnInit, IScaleEventReceiver {
       
       totalW += w; 
       if (w > 0) {
-        const el = this.createTimeSpan(this.items[i], w);
-        if (this.items[i].State)
-          el.classList.add (this.items[i].State);
-        else
-        el.classList.add (emptyStateName);
+        const el = this.createTimeSpan(items[i], w);
       }
       i++;
     } 
@@ -143,17 +142,17 @@ export class TimeLineSpanComponent implements OnInit, IScaleEventReceiver {
   }
 
   getMinTime () : number {
-    if (!this.items.length)
+    if (!this.series?.items?.length)
       return NaN;
     
-    return this.items[0].Start;
+    return this.series.items[0].Start;
   }
 
   getMaxTime () : number {
-    if (!this.items.length)
+    if (!this.series?.items?.length)
       return NaN;
 
-    return this.items[this.items.length - 1].Start + this.items[this.items.length - 1].Duration;
+    return this.series.items[this.series.items.length - 1].Start + this.series.items[this.series.items.length - 1].Duration;
   }
 
   resize () {

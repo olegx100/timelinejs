@@ -1,4 +1,8 @@
+/* Sample of user code for the Time Line Demo */
+import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
+import { ITimeLineItem, TimeLinePointLegend } from 'src/time-line/time-line.module';
+import { MyAppSeries, MyAppTimeLineItem } from './MyAppSeries';
 
 @Component({
   selector: 'app-root',
@@ -8,48 +12,15 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'TimeLineTest';
 
-  public Series: Array<any>;
-  public version = "1.0.0.1";
+  public Series: Array<MyAppSeries>;
+  public version = "1.0.1.0";
   
   constructor () {
     this.createSeries();
   }
 
-  getItems () {
-    let res:Array<any> = [
-      {"State": "Active", "Start"     : new Date(2022, 9, 28, 8, 0, 0).getTime()}, 
-      {"State": "Error", "Start"      : new Date(2022, 9, 28, 8, 3, 0).getTime()}, 
-      {"State": "Ready", "Start"      : new Date(2022, 9, 28, 8, 9, 0).getTime()}, 
-      {"State": "Service", "Start"    : new Date(2022, 9, 28, 8, 21, 0).getTime()}, 
-      {"State": "Active", "Start"     : new Date(2022, 9, 28, 8, 40, 0).getTime()}, 
-      {"State": "Ready", "Start"      : new Date(2022, 9, 28, 8, 57, 0).getTime()}, 
-      {"State": "Standby", "Start"    : new Date(2022, 9, 28, 9, 15, 0).getTime()}, 
-      {"State": "Maintenance", "Start": new Date(2022, 9, 28, 9, 35, 0).getTime()}, 
-      {"State": "Ready", "Start"      : new Date(2022, 9, 30, 0,  0, 0).getTime()},       
-      {"State": "Error", "Start"      : new Date(2022, 9, 30, 0, 30, 0).getTime()}, 
-      {"State": "Ready", "Start"      : new Date(2022, 9, 30, 1,  0, 0).getTime()}, 
-      {"State": "Standby", "Start"    : new Date(2022, 9, 30, 1, 30, 0).getTime()},       
-      {"State": "Service", "Start"    : new Date(2022, 9, 30, 2,  0, 0).getTime()},
-      {"State": "Ready", "Start"      : new Date(2022, 9, 30, 2, 30, 0).getTime(), "Duration": 30000}
-    ];
-
-    for(let i = 1; i < res.length; i++) {
-      res[i-1].Duration =  (res[i].Start - res[i-1].Start);
-    }
-
-    if (res.length > 0) 
-    {
-      if (!res[res.length-1].Duration)
-        res[res.length-1].Duration = 1;
-    }
-    //to check the empty state handling in the control
-    res[2].Duration = res[2].Duration / 3;
-
-    return res;
-  }  
-
   createDummyModel (n: number) {
-    const states = [];
+    const states = new Array<MyAppTimeLineItem>();
     const stateNames = ["Active", "Service", "Ready", "None", "Error", "Maintenance", "Standby"];
 
     let time = (new Date (2022, 9, 28)).getTime();
@@ -60,13 +31,12 @@ export class AppComponent {
         if (st === lastState)
           continue;
         
-        let state = {
-          "State": st,
-          "Duration": Math.floor(Math.random() * 120_000),
-          "Start": time
-        }
+        let state = new MyAppTimeLineItem ();
+        state.Text = st;
+        state.Duration = Math.floor(Math.random() * 120_000);
+        state.Start = time;
 
-        lastState  =st;
+        lastState = st;
         time += state.Duration;
         states.push(state);
     }
@@ -75,44 +45,86 @@ export class AppComponent {
   }
 
   createSeries (): void {
-    this.Series = [];
+    this.Series = new Array<MyAppSeries>;
 
-    this.Series.push ({ 
-      "type":'time-point', 
-      "items": this.createDummyModel(1000), 
-      "legend": {
-        "borderColor": "coral", 
-        "fillColor": "aqua", 
-        "pointSize": 11
+    // let s0 = new MyAppSeries();
+    // s0.type = 'time-point';
+    // this.Series.push (s0);
+
+    // let s_1 = new MyAppSeries();
+    // s_1.type = 'time-span';
+    // this.Series.push (s_1);
+
+    let s1 = new MyAppSeries();
+    s1.items = new Array<MyAppTimeLineItem>();
+    s1.type = 'time-point';
+    s1.onNewItemSelected = this.onTimePointSelected;
+    s1.items = this.createDummyModel(1000);
+    s1.legend = new TimeLinePointLegend();
+    s1.legend.borderColor = "coral"; 
+    s1.legend.fillColor = "aqua"; 
+    s1.legend.pointSize = 11;
+    this.Series.push (s1);
+    
+    let s2 = new MyAppSeries();
+    s2.type = 'time-scale';
+    this.Series.push (s2);
+
+    let s3 = new MyAppSeries();
+    s3.items = new Array<MyAppTimeLineItem>();
+    s3.type = 'time-point';
+    s3.onNewItemSelected = this.onTimePointSelected;
+    s3.items = this.createDummyModel(1000);
+    s3.legend = new TimeLinePointLegend();
+    s3.legend.borderColor = 'red'; 
+    s3.legend.fillColor = 'pink'; 
+    s3.legend.pointSize = 9;
+    this.Series.push (s3);
+
+    let s4 = new MyAppSeries();
+    s4.type = 'time-span';
+    s4.onNewItemCreated = this.onNewTimeSpanItemCreated;
+    s4.items = this.createDummyModel(1000);
+    this.Series.push (s4);
+
+    let s5 = new MyAppSeries();
+    s5.type = 'time-scale';
+    this.Series.push (s5);
+
+    let s6 = new MyAppSeries();
+    s6.type = 'time-point';
+    s6.onNewItemSelected = this.onTimePointSelected;
+    s6.items = this.createDummyModel(1000); 
+    s6.legend = new TimeLinePointLegend();
+    s6.legend.borderColor = 'blue'; 
+    s6.legend.fillColor = 'aqua'; 
+    s6.legend.pointSize = 13;
+    this.Series.push (s6);
+
+    let s7 = new MyAppSeries();
+    s7.type = 'time-scale';
+    this.Series.push (s7);
+  }
+
+  onNewTimeSpanItemCreated(item: ITimeLineItem, el: HTMLElement): void {
+      let myAppItem = item as MyAppTimeLineItem;
+      if(!myAppItem)
+        return;
+      if (myAppItem.Text) 
+      {
+        el.innerText = myAppItem.Text;
+        el.classList.add (myAppItem.Text);
       }
-    });
+      else
+        el.classList.add ("_EmptyState_"); //emptyStateName
+  }
 
-    this.Series.push ({ "type":'time-scale'});
-
-    this.Series.push ({ 
-      "type":'time-point', 
-      "items": this.createDummyModel(1000), 
-      "legend": {
-        "borderColor": "red", 
-        "fillColor": "pink", 
-        "pointSize": 9
-      }
-    });
-
-    this.Series.push ({ "type":'time-span', "items":  this.createDummyModel(1000) });
-
-    this.Series.push ({ "type":'time-scale'});
-
-    this.Series.push ({ 
-      "type":'time-point', 
-      "items": this.createDummyModel(1000), 
-      "legend": {
-        "borderColor": "blue", 
-        "fillColor": "aqua", 
-        "pointSize": 13
-      }
-    });
-
-    this.Series.push ({ "type":'time-scale'});
+  
+  dp = new DatePipe("en-US");
+  onTimePointSelected(item: ITimeLineItem, el: HTMLElement): void {
+    let myAppItem = item as MyAppTimeLineItem;
+    if (!myAppItem)
+      return;
+    el.innerText = "Time: " + this.dp.transform(myAppItem.Start, "yy-MM-dd HH:mm:ss.SSS") || "";
   }
 }

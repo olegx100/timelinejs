@@ -1,15 +1,11 @@
 <div #timeLineContainer class="timeLineContainer">
     <div #innerDiv style="height: 0px"></div>
-    <ng-container *ngFor="let series of Series; let i = index">
+    <ng-container *ngFor="let series of Series;">
         <ng-container *ngIf="series.type === 'time-span'">
-            <app-time-line-span [items]="series.items" ></app-time-line-span>
+            <app-time-line-span [series]="series" ></app-time-line-span>
         </ng-container>
         <ng-container *ngIf="series.type === 'time-point'">
-            <app-time-line-point [items]="series.items" 
-                [PointSize]="series.legend.pointSize" 
-                [BorderColor]="series.legend?.borderColor" 
-                [FillColor]="series.legend?.fillColor" 
-                ></app-time-line-point>
+            <app-time-line-point [series]="series" ></app-time-line-point>
         </ng-container>
         <ng-container *ngIf="series.type === 'time-scale'">
             <app-time-line-scale [nScales]="5"></app-time-line-scale>

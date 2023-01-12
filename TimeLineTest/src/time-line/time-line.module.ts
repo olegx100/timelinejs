@@ -5,8 +5,16 @@ import { TimeLineScaleComponent } from './time-line-scale/time-line-scale.compon
 import { TimeLinePointComponent } from './time-line-point/time-line-point.component';
 import { TimeLineContainerComponent } from './time-line-container/time-line-container.component';
 
+export * from './ITimeLineSeriesEvents';
+
 @NgModule({
-  declarations: [TimeLineSpanComponent, TimeLineScaleComponent, TimeLinePointComponent, TimeLineContainerComponent],
+  declarations: [
+    TimeLineSpanComponent, 
+    TimeLineScaleComponent, 
+    TimeLinePointComponent, 
+    TimeLineContainerComponent
+  ],
+  
   imports: [
     CommonModule
   ],
